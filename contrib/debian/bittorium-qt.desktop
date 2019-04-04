@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=bittorium
+Comment=bittorium P2P Anonymous Cryptocurrency
+Comment[fr]=bittorium, monnaie virtuelle cryptographique pair à pair
+Comment[tr]=bittorium, eşten eşe kriptografik sanal para birimi
+Exec=bittorium-qt %u
+Terminal=false
+Type=Application
+Icon=BTOR1
+MimeType=x-scheme-handler/bittorium;
+Categories=Office;Finance;
