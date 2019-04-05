@@ -1,5 +1,5 @@
 // Copyright (c) 2018 The PIVX developers
-// Copyright (c) 2019-2020 The Bittorium developers
+// Copyright (c) 2019 The Bittorium developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -15,7 +15,7 @@
 
 using namespace std;
 
-CzbittoriumTracker::CzbittoriumTracker(std::string strWalletFile)
+CZBittoriumTracker::CZBittoriumTracker(std::string strWalletFile)
 {
     this->strWalletFile = strWalletFile;
     mapSerialHashes.clear();
@@ -23,13 +23,13 @@ CzbittoriumTracker::CzbittoriumTracker(std::string strWalletFile)
     fInitialized = false;
 }
 
-CzbittoriumTracker::~CzbittoriumTracker()
+CZBittoriumTracker::~CZBittoriumTracker()
 {
     mapSerialHashes.clear();
     mapPendingSpends.clear();
 }
 
-void CzbittoriumTracker::Init()
+void CZBittoriumTracker::Init()
 {
     //Load all CZerocoinMints and CDeterministicMints from the database
     if (!fInitialized) {
@@ -38,7 +38,7 @@ void CzbittoriumTracker::Init()
     }
 }
 
-bool CzbittoriumTracker::Archive(CMintMeta& meta)
+bool CZBittoriumTracker::Archive(CMintMeta& meta)
 {
     if (mapSerialHashes.count(meta.hashSerial))
         mapSerialHashes.at(meta.hashSerial).isArchived = true;
@@ -61,7 +61,7 @@ bool CzbittoriumTracker::Archive(CMintMeta& meta)
     return true;
 }
 
-bool CzbittoriumTracker::UnArchive(const uint256& hashPubcoin, bool isDeterministic)
+bool CZBittoriumTracker::UnArchive(const uint256& hashPubcoin, bool isDeterministic)
 {
     CWalletDB walletdb(strWalletFile);
     if (isDeterministic) {
@@ -80,7 +80,7 @@ bool CzbittoriumTracker::UnArchive(const uint256& hashPubcoin, bool isDeterminis
     return true;
 }
 
-CMintMeta CzbittoriumTracker::Get(const uint256 &hashSerial)
+CMintMeta CZBittoriumTracker::Get(const uint256 &hashSerial)
 {
     if (!mapSerialHashes.count(hashSerial))
         return CMintMeta();
@@ -88,7 +88,7 @@ CMintMeta CzbittoriumTracker::Get(const uint256 &hashSerial)
     return mapSerialHashes.at(hashSerial);
 }
 
-CMintMeta CzbittoriumTracker::GetMetaFromPubcoin(const uint256& hashPubcoin)
+CMintMeta CZBittoriumTracker::GetMetaFromPubcoin(const uint256& hashPubcoin)
 {
     for (auto it : mapSerialHashes) {
         CMintMeta meta = it.second;
@@ -99,7 +99,7 @@ CMintMeta CzbittoriumTracker::GetMetaFromPubcoin(const uint256& hashPubcoin)
     return CMintMeta();
 }
 
-bool CzbittoriumTracker::GetMetaFromStakeHash(const uint256& hashStake, CMintMeta& meta) const
+bool CZBittoriumTracker::GetMetaFromStakeHash(const uint256& hashStake, CMintMeta& meta) const
 {
     for (auto& it : mapSerialHashes) {
         if (it.second.hashStake == hashStake) {
@@ -111,7 +111,7 @@ bool CzbittoriumTracker::GetMetaFromStakeHash(const uint256& hashStake, CMintMet
     return false;
 }
 
-std::vector<uint256> CzbittoriumTracker::GetSerialHashes()
+std::vector<uint256> CZBittoriumTracker::GetSerialHashes()
 {
     vector<uint256> vHashes;
     for (auto it : mapSerialHashes) {
@@ -125,7 +125,7 @@ std::vector<uint256> CzbittoriumTracker::GetSerialHashes()
     return vHashes;
 }
 
-CAmount CzbittoriumTracker::GetBalance(bool fConfirmedOnly, bool fUnconfirmedOnly) const
+CAmount CZBittoriumTracker::GetBalance(bool fConfirmedOnly, bool fUnconfirmedOnly) const
 {
     CAmount nTotal = 0;
     //! zerocoin specific fields
@@ -157,12 +157,12 @@ CAmount CzbittoriumTracker::GetBalance(bool fConfirmedOnly, bool fUnconfirmedOnl
     return nTotal;
 }
 
-CAmount CzbittoriumTracker::GetUnconfirmedBalance() const
+CAmount CZBittoriumTracker::GetUnconfirmedBalance() const
 {
     return GetBalance(false, true);
 }
 
-std::vector<CMintMeta> CzbittoriumTracker::GetMints(bool fConfirmedOnly) const
+std::vector<CMintMeta> CZBittoriumTracker::GetMints(bool fConfirmedOnly) const
 {
     vector<CMintMeta> vMints;
     for (auto& it : mapSerialHashes) {
@@ -178,7 +178,7 @@ std::vector<CMintMeta> CzbittoriumTracker::GetMints(bool fConfirmedOnly) const
 }
 
 //Does a mint in the tracker have this txid
-bool CzbittoriumTracker::HasMintTx(const uint256& txid)
+bool CZBittoriumTracker::HasMintTx(const uint256& txid)
 {
     for (auto it : mapSerialHashes) {
         if (it.second.txid == txid)
@@ -188,14 +188,14 @@ bool CzbittoriumTracker::HasMintTx(const uint256& txid)
     return false;
 }
 
-bool CzbittoriumTracker::HasPubcoin(const CBigNum &bnValue) const
+bool CZBittoriumTracker::HasPubcoin(const CBigNum &bnValue) const
 {
     // Check if this mint's pubcoin value belongs to our mapSerialHashes (which includes hashpubcoin values)
     uint256 hash = GetPubCoinHash(bnValue);
     return HasPubcoinHash(hash);
 }
 
-bool CzbittoriumTracker::HasPubcoinHash(const uint256& hashPubcoin) const
+bool CZBittoriumTracker::HasPubcoinHash(const uint256& hashPubcoin) const
 {
     for (auto it : mapSerialHashes) {
         CMintMeta meta = it.second;
@@ -205,19 +205,19 @@ bool CzbittoriumTracker::HasPubcoinHash(const uint256& hashPubcoin) const
     return false;
 }
 
-bool CzbittoriumTracker::HasSerial(const CBigNum& bnSerial) const
+bool CZBittoriumTracker::HasSerial(const CBigNum& bnSerial) const
 {
     uint256 hash = GetSerialHash(bnSerial);
     return HasSerialHash(hash);
 }
 
-bool CzbittoriumTracker::HasSerialHash(const uint256& hashSerial) const
+bool CZBittoriumTracker::HasSerialHash(const uint256& hashSerial) const
 {
     auto it = mapSerialHashes.find(hashSerial);
     return it != mapSerialHashes.end();
 }
 
-bool CzbittoriumTracker::UpdateZerocoinMint(const CZerocoinMint& mint)
+bool CZBittoriumTracker::UpdateZerocoinMint(const CZerocoinMint& mint)
 {
     if (!HasSerial(mint.GetSerialNumber()))
         return error("%s: mint %s is not known", __func__, mint.GetValue().GetHex());
@@ -235,7 +235,7 @@ bool CzbittoriumTracker::UpdateZerocoinMint(const CZerocoinMint& mint)
     return CWalletDB(strWalletFile).WriteZerocoinMint(mint);
 }
 
-bool CzbittoriumTracker::UpdateState(const CMintMeta& meta)
+bool CZBittoriumTracker::UpdateState(const CMintMeta& meta)
 {
     CWalletDB walletdb(strWalletFile);
 
@@ -278,7 +278,7 @@ bool CzbittoriumTracker::UpdateState(const CMintMeta& meta)
     return true;
 }
 
-void CzbittoriumTracker::Add(const CDeterministicMint& dMint, bool isNew, bool isArchived, CzbittoriumWallet* zbittoriumWallet)
+void CZBittoriumTracker::Add(const CDeterministicMint& dMint, bool isNew, bool isArchived, CZBittoriumWallet* zbittoriumWallet)
 {
     bool iszbittoriumWalletInitialized = (NULL != zbittoriumWallet);
     CMintMeta meta;
@@ -293,7 +293,7 @@ void CzbittoriumTracker::Add(const CDeterministicMint& dMint, bool isNew, bool i
     meta.isArchived = isArchived;
     meta.isDeterministic = true;
     if (! iszbittoriumWalletInitialized)
-        zbittoriumWallet = new CzbittoriumWallet(strWalletFile);
+        zbittoriumWallet = new CZBittoriumWallet(strWalletFile);
     meta.isSeedCorrect = zbittoriumWallet->CheckSeed(dMint);
     if (! iszbittoriumWalletInitialized)
         delete zbittoriumWallet;
@@ -303,7 +303,7 @@ void CzbittoriumTracker::Add(const CDeterministicMint& dMint, bool isNew, bool i
         CWalletDB(strWalletFile).WriteDeterministicMint(dMint);
 }
 
-void CzbittoriumTracker::Add(const CZerocoinMint& mint, bool isNew, bool isArchived)
+void CZBittoriumTracker::Add(const CZerocoinMint& mint, bool isNew, bool isArchived)
 {
     CMintMeta meta;
     meta.hashPubcoin = GetPubCoinHash(mint.GetValue());
@@ -324,7 +324,7 @@ void CzbittoriumTracker::Add(const CZerocoinMint& mint, bool isNew, bool isArchi
         CWalletDB(strWalletFile).WriteZerocoinMint(mint);
 }
 
-void CzbittoriumTracker::SetPubcoinUsed(const uint256& hashPubcoin, const uint256& txid)
+void CZBittoriumTracker::SetPubcoinUsed(const uint256& hashPubcoin, const uint256& txid)
 {
     if (!HasPubcoinHash(hashPubcoin))
         return;
@@ -334,7 +334,7 @@ void CzbittoriumTracker::SetPubcoinUsed(const uint256& hashPubcoin, const uint25
     UpdateState(meta);
 }
 
-void CzbittoriumTracker::SetPubcoinNotUsed(const uint256& hashPubcoin)
+void CZBittoriumTracker::SetPubcoinNotUsed(const uint256& hashPubcoin)
 {
     if (!HasPubcoinHash(hashPubcoin))
         return;
@@ -347,7 +347,7 @@ void CzbittoriumTracker::SetPubcoinNotUsed(const uint256& hashPubcoin)
     UpdateState(meta);
 }
 
-void CzbittoriumTracker::RemovePending(const uint256& txid)
+void CZBittoriumTracker::RemovePending(const uint256& txid)
 {
     uint256 hashSerial;
     for (auto it : mapPendingSpends) {
@@ -361,7 +361,7 @@ void CzbittoriumTracker::RemovePending(const uint256& txid)
         mapPendingSpends.erase(hashSerial);
 }
 
-bool CzbittoriumTracker::UpdateStatusInternal(const std::set<uint256>& setMempool, CMintMeta& mint)
+bool CZBittoriumTracker::UpdateStatusInternal(const std::set<uint256>& setMempool, CMintMeta& mint)
 {
     //! Check whether this mint has been spent and is considered 'pending' or 'confirmed'
     // If there is not a record of the block height, then look it up and assign it
@@ -437,7 +437,7 @@ bool CzbittoriumTracker::UpdateStatusInternal(const std::set<uint256>& setMempoo
     return false;
 }
 
-std::set<CMintMeta> CzbittoriumTracker::ListMints(bool fUnusedOnly, bool fMatureOnly, bool fUpdateStatus, bool fWrongSeed)
+std::set<CMintMeta> CZBittoriumTracker::ListMints(bool fUnusedOnly, bool fMatureOnly, bool fUpdateStatus, bool fWrongSeed)
 {
     CWalletDB walletdb(strWalletFile);
     if (fUpdateStatus) {
@@ -448,7 +448,7 @@ std::set<CMintMeta> CzbittoriumTracker::ListMints(bool fUnusedOnly, bool fMature
 
         std::list<CDeterministicMint> listDeterministicDB = walletdb.ListDeterministicMints();
 
-        CzbittoriumWallet* zbittoriumWallet = new CzbittoriumWallet(strWalletFile);
+        CZBittoriumWallet* zbittoriumWallet = new CZBittoriumWallet(strWalletFile);
         for (auto& dMint : listDeterministicDB) {
             Add(dMint, false, false, zbittoriumWallet);
         }
@@ -505,7 +505,7 @@ std::set<CMintMeta> CzbittoriumTracker::ListMints(bool fUnusedOnly, bool fMature
     return setMints;
 }
 
-void CzbittoriumTracker::Clear()
+void CZBittoriumTracker::Clear()
 {
     mapSerialHashes.clear();
 }

@@ -2,7 +2,7 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2018 The PIVX developers
-// Copyright (c) 2019-2020 The Bittorium developers
+// Copyright (c) 2019 The Bittorium developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -2884,7 +2884,7 @@ UniValue spendzerocoin(const UniValue& params, bool fHelp)
 
     vector<CZerocoinMint> vMintsSelected;
 
-    return DozbittoriumSpend(nAmount, fMintChange, fMinimizeChange, nSecurityLevel, vMintsSelected, address_str);
+    return DoZBittoriumSpend(nAmount, fMintChange, fMinimizeChange, nSecurityLevel, vMintsSelected, address_str);
 }
 
 
@@ -2969,11 +2969,11 @@ UniValue spendzerocoinmints(const UniValue& params, bool fHelp)
         nAmount += mint.GetDenominationAsAmount();
     }
 
-    return DozbittoriumSpend(nAmount, false, true, 100, vMintsSelected, address_str);
+    return DoZBittoriumSpend(nAmount, false, true, 100, vMintsSelected, address_str);
 }
 
 
-extern UniValue DozbittoriumSpend(const CAmount nAmount, bool fMintChange, bool fMinimizeChange, const int nSecurityLevel, vector<CZerocoinMint>& vMintsSelected, std::string address_str)
+extern UniValue DoZBittoriumSpend(const CAmount nAmount, bool fMintChange, bool fMinimizeChange, const int nSecurityLevel, vector<CZerocoinMint>& vMintsSelected, std::string address_str)
 {
     int64_t nTimeStart = GetTimeMillis();
     CBitcoinAddress address = CBitcoinAddress(); // Optional sending address. Dummy initialization here.
@@ -3065,7 +3065,7 @@ UniValue resetmintzerocoin(const UniValue& params, bool fHelp)
     LOCK2(cs_main, pwalletMain->cs_wallet);
 
     CWalletDB walletdb(pwalletMain->strWalletFile);
-    CzbittoriumTracker* zbittoriumTracker = pwalletMain->zbittoriumTracker.get();
+    CZBittoriumTracker* zbittoriumTracker = pwalletMain->zbittoriumTracker.get();
     set<CMintMeta> setMints = zbittoriumTracker->ListMints(false, false, true);
     vector<CMintMeta> vMintsToFind(setMints.begin(), setMints.end());
     vector<CMintMeta> vMintsMissing;
@@ -3118,7 +3118,7 @@ UniValue resetspentzerocoin(const UniValue& params, bool fHelp)
     LOCK2(cs_main, pwalletMain->cs_wallet);
 
     CWalletDB walletdb(pwalletMain->strWalletFile);
-    CzbittoriumTracker* zbittoriumTracker = pwalletMain->zbittoriumTracker.get();
+    CZBittoriumTracker* zbittoriumTracker = pwalletMain->zbittoriumTracker.get();
     set<CMintMeta> setMints = zbittoriumTracker->ListMints(false, false, false);
     list<CZerocoinSpend> listSpends = walletdb.ListSpentCoins();
     list<CZerocoinSpend> listUnconfirmedSpends;
@@ -3255,7 +3255,7 @@ UniValue exportzerocoins(const UniValue& params, bool fHelp)
     if (params.size() == 2)
         denomination = libzerocoin::IntToZerocoinDenomination(params[1].get_int());
 
-    CzbittoriumTracker* zbittoriumTracker = pwalletMain->zbittoriumTracker.get();
+    CZBittoriumTracker* zbittoriumTracker = pwalletMain->zbittoriumTracker.get();
     set<CMintMeta> setMints = zbittoriumTracker->ListMints(!fIncludeSpent, false, false);
 
     UniValue jsonList(UniValue::VARR);
@@ -3455,7 +3455,7 @@ UniValue setzbittoriumseed(const UniValue& params, bool fHelp)
     uint256 seed;
     seed.SetHex(params[0].get_str());
 
-    CzbittoriumWallet* zwallet = pwalletMain->getZWallet();
+    CZBittoriumWallet* zwallet = pwalletMain->getZWallet();
     bool fSuccess = zwallet->SetMasterSeed(seed, true);
     if (fSuccess)
         zwallet->SyncWithChain();
@@ -3482,7 +3482,7 @@ UniValue getzbittoriumseed(const UniValue& params, bool fHelp)
 
     EnsureWalletIsUnlocked();
 
-    CzbittoriumWallet* zwallet = pwalletMain->getZWallet();
+    CZBittoriumWallet* zwallet = pwalletMain->getZWallet();
     uint256 seed = zwallet->GetMasterSeed();
 
     UniValue ret(UniValue::VOBJ);
@@ -3521,7 +3521,7 @@ UniValue generatemintlist(const UniValue& params, bool fHelp)
 
     int nCount = params[0].get_int();
     int nRange = params[1].get_int();
-    CzbittoriumWallet* zwallet = pwalletMain->zwalletMain;
+    CZBittoriumWallet* zwallet = pwalletMain->zwalletMain;
 
     UniValue arrRet(UniValue::VARR);
     for (int i = nCount; i < nCount + nRange; i++) {
@@ -3550,7 +3550,7 @@ UniValue dzbittoriumstate(const UniValue& params, bool fHelp) {
                         "\nExamples\n" +
                 HelpExampleCli("mintpoolstatus", "") + HelpExampleRpc("mintpoolstatus", ""));
 
-    CzbittoriumWallet* zwallet = pwalletMain->zwalletMain;
+    CZBittoriumWallet* zwallet = pwalletMain->zwalletMain;
     UniValue obj(UniValue::VOBJ);
     int nCount, nCountLastUsed;
     zwallet->GetState(nCount, nCountLastUsed);
@@ -3561,7 +3561,7 @@ UniValue dzbittoriumstate(const UniValue& params, bool fHelp) {
 }
 
 
-void static SearchThread(CzbittoriumWallet* zwallet, int nCountStart, int nCountEnd)
+void static SearchThread(CZBittoriumWallet* zwallet, int nCountStart, int nCountEnd)
 {
     LogPrintf("%s: start=%d end=%d\n", __func__, nCountStart, nCountEnd);
     CWalletDB walletDB(pwalletMain->strWalletFile);
@@ -3578,7 +3578,7 @@ void static SearchThread(CzbittoriumWallet* zwallet, int nCountStart, int nCount
             CBigNum bnSerial;
             CBigNum bnRandomness;
             CKey key;
-            zwallet->SeedTozbittorium(zerocoinSeed, bnValue, bnSerial, bnRandomness, key);
+            zwallet->SeedToZBittorium(zerocoinSeed, bnValue, bnSerial, bnRandomness, key);
 
             uint256 hashPubcoin = GetPubCoinHash(bnValue);
             zwallet->AddToMintPool(make_pair(hashPubcoin, i), true);
@@ -3619,7 +3619,7 @@ UniValue searchdzbittorium(const UniValue& params, bool fHelp)
 
     int nThreads = params[2].get_int();
 
-    CzbittoriumWallet* zwallet = pwalletMain->zwalletMain;
+    CZBittoriumWallet* zwallet = pwalletMain->zwalletMain;
 
     boost::thread_group* dzbittoriumThreads = new boost::thread_group();
     int nRangePerThread = nRange / nThreads;

@@ -1,10 +1,10 @@
 // Copyright (c) 2017-2018 The PIVX developers
-// Copyright (c) 2019-2020 The Bittorium developers
+// Copyright (c) 2019 The Bittorium developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef bittorium_ZEROCOIN_H
-#define bittorium_ZEROCOIN_H
+#ifndef BITTORIUM_ZEROCOIN_H
+#define BITTORIUM_ZEROCOIN_H
 
 #include <amount.h>
 #include <limits.h>
@@ -249,4 +249,4 @@ public:
     int GetNeededSpends();
 };
 
-#endif //bittorium_ZEROCOIN_H
+#endif //BITTORIUM_ZEROCOIN_H

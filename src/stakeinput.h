@@ -1,10 +1,10 @@
 // Copyright (c) 2017-2018 The PIVX developers
-// Copyright (c) 2019-2020 The Bittorium developers
+// Copyright (c) 2019 The Bittorium developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef bittorium_STAKEINPUT_H
-#define bittorium_STAKEINPUT_H
+#ifndef BITTORIUM_STAKEINPUT_H
+#define BITTORIUM_STAKEINPUT_H
 
 class CKeyStore;
 class CWallet;
@@ -23,7 +23,7 @@ public:
     virtual CAmount GetValue() = 0;
     virtual bool CreateTxOuts(CWallet* pwallet, vector<CTxOut>& vout, CAmount nTotal) = 0;
     virtual bool GetModifier(uint64_t& nStakeModifier) = 0;
-    virtual bool IsZbittorium() = 0;
+    virtual bool IsZBittorium() = 0;
     virtual CDataStream GetUniqueness() = 0;
 };
 
@@ -31,7 +31,7 @@ public:
 // zbittoriumStake can take two forms
 // 1) the stake candidate, which is a zcmint that is attempted to be staked
 // 2) a staked zbittorium, which is a zcspend that has successfully staked
-class CZbittoriumStake : public CStakeInput
+class CZBittoriumStake : public CStakeInput
 {
 private:
     uint32_t nChecksum;
@@ -40,7 +40,7 @@ private:
     uint256 hashSerial;
 
 public:
-    explicit CZbittoriumStake(libzerocoin::CoinDenomination denom, const uint256& hashSerial)
+    explicit CZBittoriumStake(libzerocoin::CoinDenomination denom, const uint256& hashSerial)
     {
         this->denom = denom;
         this->hashSerial = hashSerial;
@@ -48,7 +48,7 @@ public:
         fMint = true;
     }
 
-    explicit CZbittoriumStake(const libzerocoin::CoinSpend& spend);
+    explicit CZBittoriumStake(const libzerocoin::CoinSpend& spend);
 
     CBlockIndex* GetIndexFrom() override;
     bool GetTxFrom(CTransaction& tx) override;
@@ -58,19 +58,19 @@ public:
     bool CreateTxIn(CWallet* pwallet, CTxIn& txIn, uint256 hashTxOut = 0) override;
     bool CreateTxOuts(CWallet* pwallet, vector<CTxOut>& vout, CAmount nTotal) override;
     bool MarkSpent(CWallet* pwallet, const uint256& txid);
-    bool IsZbittorium() override { return true; }
+    bool IsZBittorium() override { return true; }
     int GetChecksumHeightFromMint();
     int GetChecksumHeightFromSpend();
     uint32_t GetChecksum();
 };
 
-class CbittoriumStake : public CStakeInput
+class CBittoriumStake : public CStakeInput
 {
 private:
     CTransaction txFrom;
     unsigned int nPosition;
 public:
-    CbittoriumStake()
+    CBittoriumStake()
     {
         this->pindexFrom = nullptr;
     }
@@ -84,8 +84,8 @@ public:
     CDataStream GetUniqueness() override;
     bool CreateTxIn(CWallet* pwallet, CTxIn& txIn, uint256 hashTxOut = 0) override;
     bool CreateTxOuts(CWallet* pwallet, vector<CTxOut>& vout, CAmount nTotal) override;
-    bool IsZbittorium() override { return false; }
+    bool IsZBittorium() override { return false; }
 };
 
 
-#endif //bittorium_STAKEINPUT_H
+#endif //BITTORIUM_STAKEINPUT_H

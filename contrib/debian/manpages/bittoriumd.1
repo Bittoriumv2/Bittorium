@@ -13,7 +13,7 @@ bittorium can be sent easily through the Internet, without having to trust middl
 .SH OPTIONS
 .TP
 \fB\-conf=\fR<file>
-Specify configuration file (default: pivx.conf)
+Specify configuration file (default: bittorium.conf)
 .TP
 \fB\-gen\fR
 Generate coins
@@ -77,7 +77,7 @@ Returns the account associated with the given address.
 Sets the ['account'] associated with the given address. ['account'] may be omitted to remove an address from ['account'].
 .TP
 \fBgetaccountaddress 'account'\fR
-Returns a new bittroium address for 'account'.
+Returns a new bittorium address for 'account'.
 .TP
 \fBgetaddressesbyaccount 'account'\fR
 Returns the list of addresses associated with the given 'account'.
@@ -116,7 +116,7 @@ Returns a new bittorium address for receiving payments. If 'account' is specifie
 Returns the total amount received by addresses associated with 'account' in transactions with at least ['minconf'] confirmations.
 .TP
 \fBgetreceivedbyaddress 'bittoriumaddress' ['minconf=1']\fR
-Returns the total amount received by 'pivxaddress' in transactions with at least ['minconf'] confirmations.
+Returns the total amount received by 'bittoriumaddress' in transactions with at least ['minconf'] confirmations.
 .TP
 \fBgettransaction 'txid'\fR
 Returns information about a specific transaction, given hexadecimal transaction ID.
@@ -163,12 +163,12 @@ Returns a list of the last ['count'] transactions for 'account' \- for all accou
     "message"       : message associated with transaction (only for send).
     "to"            : message-to associated with transaction (only for send).
 
-    *note: requires bittroium 1.0.0.1 or later.
+    *note: requires bittorium 1.0.0.1 or later.
 .TP
 \fBmove <'fromaccount'> <'toaccount'> <'amount'> ['minconf=1'] ['comment']\fR
 Moves funds between accounts.
 .TP
-\fBsendfrom* <'account'> <'bittroiumaddress'> <'amount'> ['minconf=1'] ['comment'] ['comment-to']\fR
+\fBsendfrom* <'account'> <'bittoriumaddress'> <'amount'> ['minconf=1'] ['comment'] ['comment-to']\fR
 Sends amount from account's balance to 'bittoriumaddress'. This method will fail if there is less than amount BTOR with ['minconf'] confirmations in the account's balance (unless account is the empty-string-named default account; it behaves like the *sendtoaddress* method). Returns transaction ID on success.
 .TP
 \fBsendtoaddress 'bittoriumaddress' 'amount' ['comment'] ['comment-to']\fR

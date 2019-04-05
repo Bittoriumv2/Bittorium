@@ -1,12 +1,12 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2015-2018 The PIVX developers
-// Copyright (c) 2019-2020 The Bittorium developers
+// Copyright (c) 2019 The Bittorium developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef bittorium_SERIALIZE_H
-#define bittorium_SERIALIZE_H
+#ifndef BITTORIUM_SERIALIZE_H
+#define BITTORIUM_SERIALIZE_H
 
 #include <algorithm>
 #include <assert.h>
@@ -937,4 +937,4 @@ public:
     }
 };
 
-#endif // bittorium_SERIALIZE_H
+#endif // BITTORIUM_SERIALIZE_H

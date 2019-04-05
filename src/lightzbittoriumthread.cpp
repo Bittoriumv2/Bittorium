@@ -1,6 +1,6 @@
 //
 // Copyright (c) 2015-2018 The PIVX developers
-// Copyright (c) 2019-2020 The Bittorium developers
+// Copyright (c) 2019 The Bittorium developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 //
@@ -10,7 +10,7 @@
 #include "main.h"
 
 /****** Thread ********/
-void CLightWorker::ThreadLightZbittoriumSimplified() {
+void CLightWorker::ThreadLightZBittoriumSimplified() {
     RenameThread("bittorium-light-thread");
     isWorkerRunning = true;
     while (true) {
@@ -63,7 +63,7 @@ void CLightWorker::ThreadLightZbittoriumSimplified() {
                         );
 
                     } catch (NotEnoughMintsException e) {
-                        LogPrintStr(std::string("ThreadLightZbittoriumSimplified: ") + e.message + "\n");
+                        LogPrintStr(std::string("ThreadLightZBittoriumSimplified: ") + e.message + "\n");
                         rejectWork(genWit, blockHeight, NOT_ENOUGH_MINTS);
                         continue;
                     }

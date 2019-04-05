@@ -1,7 +1,7 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2013 The Bitcoin developers
 // Copyright (c) 2016-2018 The PIVX developers
-// Copyright (c) 2019-2020 The Bittorium developers
+// Copyright (c) 2019 The Bittorium developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -180,14 +180,14 @@ public:
     bool ReadZerocoinSpendSerialEntry(const CBigNum& bnSerial);
     bool WriteCurrentSeedHash(const uint256& hashSeed);
     bool ReadCurrentSeedHash(uint256& hashSeed);
-    bool WriteZbittoriumSeed(const uint256& hashSeed, const vector<unsigned char>& seed);
-    bool ReadZbittoriumSeed(const uint256& hashSeed, vector<unsigned char>& seed);
-    bool ReadZbittoriumSeed_deprecated(uint256& seed);
-    bool EraseZbittoriumSeed();
-    bool EraseZbittoriumSeed_deprecated();
+    bool WriteZBittoriumSeed(const uint256& hashSeed, const vector<unsigned char>& seed);
+    bool ReadZBittoriumSeed(const uint256& hashSeed, vector<unsigned char>& seed);
+    bool ReadZBittoriumSeed_deprecated(uint256& seed);
+    bool EraseZBittoriumSeed();
+    bool EraseZBittoriumSeed_deprecated();
 
-    bool WriteZbittoriumCount(const uint32_t& nCount);
-    bool ReadZbittoriumCount(uint32_t& nCount);
+    bool WriteZBittoriumCount(const uint32_t& nCount);
+    bool ReadZBittoriumCount(uint32_t& nCount);
     std::map<uint256, std::vector<pair<uint256, uint32_t> > > MapMintPool();
     bool WriteMintPoolPair(const uint256& hashMasterSeed, const uint256& hashPubcoin, const uint32_t& nCount);
 

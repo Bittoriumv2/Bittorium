@@ -1,10 +1,10 @@
 // Copyright (c) 2018 The PIVX developers
-// Copyright (c) 2019-2020 The Bittorium developers
+// Copyright (c) 2019 The Bittorium developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef bittorium_SPENDTYPE_H
-#define bittorium_SPENDTYPE_H
+#ifndef BITTORIUM_SPENDTYPE_H
+#define BITTORIUM_SPENDTYPE_H
 
 #include <cstdint>
 
@@ -17,4 +17,4 @@ namespace libzerocoin {
     };
 }
 
-#endif //bittorium_SPENDTYPE_H
+#endif //BITTORIUM_SPENDTYPE_H

@@ -1,12 +1,12 @@
 //
 // Copyright (c) 2015-2018 The PIVX developers
-// Copyright (c) 2019-2020 The Bittorium developers
+// Copyright (c) 2019 The Bittorium developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 //
 
-#ifndef bittorium_LIGHTZPIVTHREAD_H
-#define bittorium_LIGHTZPIVTHREAD_H
+#ifndef BITTORIUM_LIGHTZBITTORIUMTHREAD_H
+#define BITTORIUM_LIGHTZBITTORIUMTHREAD_H
 
 #include <atomic>
 #include "genwit.h"
@@ -51,22 +51,22 @@ public:
         return true;
     }
 
-    void StartLightZpivThread(boost::thread_group& threadGroup) {
+    void StartLightZBittoriumThread(boost::thread_group& threadGroup) {
         LogPrintf("%s thread start\n", "bittorium-light-thread");
-        threadIns = boost::thread(boost::bind(&CLightWorker::ThreadLightZPIVSimplified, this));
+        threadIns = boost::thread(boost::bind(&CLightWorker::ThreadLightZBittoriumSimplified, this));
     }
 
-    void StopLightZpivThread() {
+    void StopLightZBittoriumThread() {
         threadIns.interrupt();
         LogPrintf("%s thread interrupted\n", "bittorium-light-thread");
     }
 
 private:
 
-    void ThreadLightZPIVSimplified();
+    void ThreadLightZBittoriumSimplified();
 
     void rejectWork(CGenWit& wit, int blockHeight, uint32_t errorNumber);
 
 };
 
-#endif //bittorium_LIGHTZPIVTHREAD_H
+#endif //BITTORIUM_LIGHTZBITTORIUMTHREAD_H

@@ -2,7 +2,7 @@ Source: bittorium
 Section: utils
 Priority: optional
 Maintainer: Naeem Azad <dev@bittorium.org> 
-Uploaders: Micah Anderson <micah@debian.org> ***TODO***
+Uploaders: Naeem Azad <dev@bittorium.org>
 Build-Depends: debhelper,
  devscripts,
  automake,
@@ -22,7 +22,7 @@ Build-Depends: debhelper,
  libqrencode-dev,
  libprotobuf-dev, protobuf-compiler
 Standards-Version: 3.9.2
-Homepage: http://www.pivx.org
+Homepage: http://www.bittorium.org
 Vcs-Git: git://github.com/bittorium/Bittorium
 Vcs-Browser: http://github.com/bittorium/Bittorium
 

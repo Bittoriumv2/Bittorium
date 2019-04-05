@@ -1,5 +1,5 @@
 // Copyright (c) 2017-2018 The PIVX developers
-// Copyright (c) 2019-2020 The Bittorium developers
+// Copyright (c) 2019 The Bittorium developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -14,7 +14,7 @@
 
 using namespace libzerocoin;
 
-CzbittoriumWallet::CzbittoriumWallet(std::string strWalletFile)
+CZBittoriumWallet::CZBittoriumWallet(std::string strWalletFile)
 {
     this->strWalletFile = strWalletFile;
     CWalletDB walletdb(strWalletFile);
@@ -25,12 +25,12 @@ CzbittoriumWallet::CzbittoriumWallet(std::string strWalletFile)
     //Check for old db version of storing zbittorium seed
     if (fFirstRun) {
         uint256 seed;
-        if (walletdb.ReadZbittoriumSeed_deprecated(seed)) {
+        if (walletdb.ReadZBittoriumSeed_deprecated(seed)) {
             //Update to new format, erase old
             seedMaster = seed;
             hashSeed = Hash(seed.begin(), seed.end());
             if (pwalletMain->AddDeterministicSeed(seed)) {
-                if (walletdb.EraseZbittoriumSeed_deprecated()) {
+                if (walletdb.EraseZBittoriumSeed_deprecated()) {
                     LogPrintf("%s: Updated zbittorium seed databasing\n", __func__);
                     fFirstRun = false;
                 } else {
@@ -69,7 +69,7 @@ CzbittoriumWallet::CzbittoriumWallet(std::string strWalletFile)
     this->mintPool = CMintPool(nCountLastUsed);
 }
 
-bool CzbittoriumWallet::SetMasterSeed(const uint256& seedMaster, bool fResetCount)
+bool CZBittoriumWallet::SetMasterSeed(const uint256& seedMaster, bool fResetCount)
 {
 
     CWalletDB walletdb(strWalletFile);
@@ -85,8 +85,8 @@ bool CzbittoriumWallet::SetMasterSeed(const uint256& seedMaster, bool fResetCoun
     nCountLastUsed = 0;
 
     if (fResetCount)
-        walletdb.WriteZbittoriumCount(nCountLastUsed);
-    else if (!walletdb.ReadZbittoriumCount(nCountLastUsed))
+        walletdb.WriteZBittoriumCount(nCountLastUsed);
+    else if (!walletdb.ReadZBittoriumCount(nCountLastUsed))
         nCountLastUsed = 0;
 
     mintPool.Reset();
@@ -94,18 +94,18 @@ bool CzbittoriumWallet::SetMasterSeed(const uint256& seedMaster, bool fResetCoun
     return true;
 }
 
-void CzbittoriumWallet::Lock()
+void CZBittoriumWallet::Lock()
 {
     seedMaster = 0;
 }
 
-void CzbittoriumWallet::AddToMintPool(const std::pair<uint256, uint32_t>& pMint, bool fVerbose)
+void CZBittoriumWallet::AddToMintPool(const std::pair<uint256, uint32_t>& pMint, bool fVerbose)
 {
     mintPool.Add(pMint, fVerbose);
 }
 
 //Add the next 20 mints to the mint pool
-void CzbittoriumWallet::GenerateMintPool(uint32_t nCountStart, uint32_t nCountEnd)
+void CZBittoriumWallet::GenerateMintPool(uint32_t nCountStart, uint32_t nCountEnd)
 {
 
     //Is locked
@@ -147,7 +147,7 @@ void CzbittoriumWallet::GenerateMintPool(uint32_t nCountStart, uint32_t nCountEn
         CBigNum bnSerial;
         CBigNum bnRandomness;
         CKey key;
-        SeedToZbittorium(seedZerocoin, bnValue, bnSerial, bnRandomness, key);
+        SeedToZBittorium(seedZerocoin, bnValue, bnSerial, bnRandomness, key);
 
         mintPool.Add(bnValue, i);
         CWalletDB(strWalletFile).WriteMintPoolPair(hashSeed, GetPubCoinHash(bnValue), i);
@@ -156,7 +156,7 @@ void CzbittoriumWallet::GenerateMintPool(uint32_t nCountStart, uint32_t nCountEn
 }
 
 // pubcoin hashes are stored to db so that a full accounting of mints belonging to the seed can be tracked without regenerating
-bool CzbittoriumWallet::LoadMintPoolFromDB()
+bool CZBittoriumWallet::LoadMintPoolFromDB()
 {
     map<uint256, vector<pair<uint256, uint32_t> > > mapMintPool = CWalletDB(strWalletFile).MapMintPool();
 
@@ -167,20 +167,20 @@ bool CzbittoriumWallet::LoadMintPoolFromDB()
     return true;
 }
 
-void CzbittoriumWallet::RemoveMintsFromPool(const std::vector<uint256>& vPubcoinHashes)
+void CZBittoriumWallet::RemoveMintsFromPool(const std::vector<uint256>& vPubcoinHashes)
 {
     for (const uint256& hash : vPubcoinHashes)
         mintPool.Remove(hash);
 }
 
-void CzbittoriumWallet::GetState(int& nCount, int& nLastGenerated)
+void CZBittoriumWallet::GetState(int& nCount, int& nLastGenerated)
 {
     nCount = this->nCountLastUsed + 1;
     nLastGenerated = mintPool.CountOfLastGenerated();
 }
 
 //Catch the counter up with the chain
-void CzbittoriumWallet::SyncWithChain(bool fGenerateMintPool)
+void CZBittoriumWallet::SyncWithChain(bool fGenerateMintPool)
 {
     uint32_t nLastCountUsed = 0;
     bool found = true;
@@ -281,7 +281,7 @@ void CzbittoriumWallet::SyncWithChain(bool fGenerateMintPool)
     }
 }
 
-bool CzbittoriumWallet::SetMintSeen(const CBigNum& bnValue, const int& nHeight, const uint256& txid, const CoinDenomination& denom)
+bool CZBittoriumWallet::SetMintSeen(const CBigNum& bnValue, const int& nHeight, const uint256& txid, const CoinDenomination& denom)
 {
     if (!mintPool.Has(bnValue))
         return error("%s: value not in pool", __func__);
@@ -293,7 +293,7 @@ bool CzbittoriumWallet::SetMintSeen(const CBigNum& bnValue, const int& nHeight, 
     CBigNum bnSerial;
     CBigNum bnRandomness;
     CKey key;
-    SeedToZbittorium(seedZerocoin, bnValueGen, bnSerial, bnRandomness, key);
+    SeedToZBittorium(seedZerocoin, bnValueGen, bnSerial, bnRandomness, key);
 
     //Sanity check
     if (bnValueGen != bnValue)
@@ -329,12 +329,12 @@ bool CzbittoriumWallet::SetMintSeen(const CBigNum& bnValue, const int& nHeight, 
 
     // Add to zbittoriumTracker which also adds to database
     pwalletMain->zbittoriumTracker->Add(dMint, true);
-    
+
     //Update the count if it is less than the mint's count
     if (nCountLastUsed < pMint.second) {
         CWalletDB walletdb(strWalletFile);
         nCountLastUsed = pMint.second;
-        walletdb.WriteZbittoriumCount(nCountLastUsed);
+        walletdb.WriteZBittoriumCount(nCountLastUsed);
     }
 
     //remove from the pool
@@ -351,7 +351,7 @@ bool IsValidCoinValue(const CBigNum& bnValue)
     bnValue.isPrime();
 }
 
-void CzbittoriumWallet::SeedToZbittorium(const uint512& seedZerocoin, CBigNum& bnValue, CBigNum& bnSerial, CBigNum& bnRandomness, CKey& key)
+void CZBittoriumWallet::SeedToZBittorium(const uint512& seedZerocoin, CBigNum& bnValue, CBigNum& bnSerial, CBigNum& bnRandomness, CKey& key)
 {
     ZerocoinParams* params = Params().Zerocoin_Params(false);
 
@@ -400,7 +400,7 @@ void CzbittoriumWallet::SeedToZbittorium(const uint512& seedZerocoin, CBigNum& b
     }
 }
 
-uint512 CzbittoriumWallet::GetZerocoinSeed(uint32_t n)
+uint512 CZBittoriumWallet::GetZerocoinSeed(uint32_t n)
 {
     CDataStream ss(SER_GETHASH, 0);
     ss << seedMaster << n;
@@ -408,14 +408,14 @@ uint512 CzbittoriumWallet::GetZerocoinSeed(uint32_t n)
     return zerocoinSeed;
 }
 
-void CzbittoriumWallet::UpdateCount()
+void CZBittoriumWallet::UpdateCount()
 {
     nCountLastUsed++;
     CWalletDB walletdb(strWalletFile);
-    walletdb.WriteZbittoriumCount(nCountLastUsed);
+    walletdb.WriteZBittoriumCount(nCountLastUsed);
 }
 
-void CzbittoriumWallet::GenerateDeterministicZbittorium(CoinDenomination denom, PrivateCoin& coin, CDeterministicMint& dMint, bool fGenerateOnly)
+void CZBittoriumWallet::GenerateDeterministicZBittorium(CoinDenomination denom, PrivateCoin& coin, CDeterministicMint& dMint, bool fGenerateOnly)
 {
     GenerateMint(nCountLastUsed + 1, denom, coin, dMint);
     if (fGenerateOnly)
@@ -425,14 +425,14 @@ void CzbittoriumWallet::GenerateDeterministicZbittorium(CoinDenomination denom, 
     //LogPrintf("%s : Generated new deterministic mint. Count=%d pubcoin=%s seed=%s\n", __func__, nCount, coin.getPublicCoin().getValue().GetHex().substr(0,6), seedZerocoin.GetHex().substr(0, 4));
 }
 
-void CzbittoriumWallet::GenerateMint(const uint32_t& nCount, const CoinDenomination denom, PrivateCoin& coin, CDeterministicMint& dMint)
+void CZBittoriumWallet::GenerateMint(const uint32_t& nCount, const CoinDenomination denom, PrivateCoin& coin, CDeterministicMint& dMint)
 {
     uint512 seedZerocoin = GetZerocoinSeed(nCount);
     CBigNum bnValue;
     CBigNum bnSerial;
     CBigNum bnRandomness;
     CKey key;
-    SeedToZbittorium(seedZerocoin, bnValue, bnSerial, bnRandomness, key);
+    SeedToZBittorium(seedZerocoin, bnValue, bnSerial, bnRandomness, key);
     coin = PrivateCoin(Params().Zerocoin_Params(false), denom, bnSerial, bnRandomness);
     coin.setPrivKey(key.GetPrivKey());
     coin.setVersion(PrivateCoin::CURRENT_VERSION);
@@ -446,14 +446,14 @@ void CzbittoriumWallet::GenerateMint(const uint32_t& nCount, const CoinDenominat
     dMint.SetDenomination(denom);
 }
 
-bool CzbittoriumWallet::CheckSeed(const CDeterministicMint& dMint)
+bool CZBittoriumWallet::CheckSeed(const CDeterministicMint& dMint)
 {
     //Check that the seed is correct    todo:handling of incorrect, or multiple seeds
     uint256 hashSeed = Hash(seedMaster.begin(), seedMaster.end());
     return hashSeed == dMint.GetSeedHash();
 }
 
-bool CzbittoriumWallet::RegenerateMint(const CDeterministicMint& dMint, CZerocoinMint& mint)
+bool CZBittoriumWallet::RegenerateMint(const CDeterministicMint& dMint, CZerocoinMint& mint)
 {
     if (!CheckSeed(dMint)) {
         uint256 hashSeed = Hash(seedMaster.begin(), seedMaster.end());

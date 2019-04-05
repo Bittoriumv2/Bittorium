@@ -1,5 +1,5 @@
 // Copyright (c) 2017-2018 The PIVX developers
-// Copyright (c) 2019-2020 The Bittorium developers
+// Copyright (c) 2019 The Bittorium developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -10,7 +10,7 @@
 #include "stakeinput.h"
 #include "wallet.h"
 
-CZbittoriumStake::CZbittoriumStake(const libzerocoin::CoinSpend& spend)
+CZBittoriumStake::CZBittoriumStake(const libzerocoin::CoinSpend& spend)
 {
     this->nChecksum = spend.getAccumulatorChecksum();
     this->denom = spend.getDenomination();
@@ -20,7 +20,7 @@ CZbittoriumStake::CZbittoriumStake(const libzerocoin::CoinSpend& spend)
     fMint = false;
 }
 
-int CZbittoriumStake::GetChecksumHeightFromMint()
+int CZBittoriumStake::GetChecksumHeightFromMint()
 {
     int nHeightChecksum = chainActive.Height() - Params().Zerocoin_RequiredStakeDepth();
 
@@ -31,12 +31,12 @@ int CZbittoriumStake::GetChecksumHeightFromMint()
     return GetChecksumHeight(nChecksum, denom);
 }
 
-int CZbittoriumStake::GetChecksumHeightFromSpend()
+int CZBittoriumStake::GetChecksumHeightFromSpend()
 {
     return GetChecksumHeight(nChecksum, denom);
 }
 
-uint32_t CZbittoriumStake::GetChecksum()
+uint32_t CZBittoriumStake::GetChecksum()
 {
     return nChecksum;
 }
@@ -44,7 +44,7 @@ uint32_t CZbittoriumStake::GetChecksum()
 // The zbittorium block index is the first appearance of the accumulator checksum that was used in the spend
 // note that this also means when staking that this checksum should be from a block that is beyond 60 minutes old and
 // 100 blocks deep.
-CBlockIndex* CZbittoriumStake::GetIndexFrom()
+CBlockIndex* CZBittoriumStake::GetIndexFrom()
 {
     if (pindexFrom)
         return pindexFrom;
@@ -66,13 +66,13 @@ CBlockIndex* CZbittoriumStake::GetIndexFrom()
     return pindexFrom;
 }
 
-CAmount CZbittoriumStake::GetValue()
+CAmount CZBittoriumStake::GetValue()
 {
     return denom * COIN;
 }
 
 //Use the first accumulator checkpoint that occurs 60 minutes after the block being staked from
-bool CZbittoriumStake::GetModifier(uint64_t& nStakeModifier)
+bool CZBittoriumStake::GetModifier(uint64_t& nStakeModifier)
 {
     CBlockIndex* pindex = GetIndexFrom();
     if (!pindex)
@@ -92,7 +92,7 @@ bool CZbittoriumStake::GetModifier(uint64_t& nStakeModifier)
     }
 }
 
-CDataStream CZbittoriumStake::GetUniqueness()
+CDataStream CZBittoriumStake::GetUniqueness()
 {
     //The unique identifier for a zbittorium is a hash of the serial
     CDataStream ss(SER_GETHASH, 0);
@@ -100,7 +100,7 @@ CDataStream CZbittoriumStake::GetUniqueness()
     return ss;
 }
 
-bool CZbittoriumStake::CreateTxIn(CWallet* pwallet, CTxIn& txIn, uint256 hashTxOut)
+bool CZBittoriumStake::CreateTxIn(CWallet* pwallet, CTxIn& txIn, uint256 hashTxOut)
 {
     CBlockIndex* pindexCheckpoint = GetIndexFrom();
     if (!pindexCheckpoint)
@@ -121,13 +121,13 @@ bool CZbittoriumStake::CreateTxIn(CWallet* pwallet, CTxIn& txIn, uint256 hashTxO
     return true;
 }
 
-bool CZbittoriumStake::CreateTxOuts(CWallet* pwallet, vector<CTxOut>& vout, CAmount nTotal)
+bool CZBittoriumStake::CreateTxOuts(CWallet* pwallet, vector<CTxOut>& vout, CAmount nTotal)
 {
     //Create an output returning the zbittorium that was staked
     CTxOut outReward;
     libzerocoin::CoinDenomination denomStaked = libzerocoin::AmountToZerocoinDenomination(this->GetValue());
     CDeterministicMint dMint;
-    if (!pwallet->CreateZbittoriumOutPut(denomStaked, outReward, dMint))
+    if (!pwallet->CreateZBittoriumOutPut(denomStaked, outReward, dMint))
         return error("%s: failed to create zbittorium output", __func__);
     vout.emplace_back(outReward);
 
@@ -138,7 +138,7 @@ bool CZbittoriumStake::CreateTxOuts(CWallet* pwallet, vector<CTxOut>& vout, CAmo
     for (unsigned int i = 0; i < 3; i++) {
         CTxOut out;
         CDeterministicMint dMintReward;
-        if (!pwallet->CreateZbittoriumOutPut(libzerocoin::CoinDenomination::ZQ_ONE, out, dMintReward))
+        if (!pwallet->CreateZBittoriumOutPut(libzerocoin::CoinDenomination::ZQ_ONE, out, dMintReward))
             return error("%s: failed to create zbittorium output", __func__);
         vout.emplace_back(out);
 
@@ -149,14 +149,14 @@ bool CZbittoriumStake::CreateTxOuts(CWallet* pwallet, vector<CTxOut>& vout, CAmo
     return true;
 }
 
-bool CZbittoriumStake::GetTxFrom(CTransaction& tx)
+bool CZBittoriumStake::GetTxFrom(CTransaction& tx)
 {
     return false;
 }
 
-bool CZbittoriumStake::MarkSpent(CWallet *pwallet, const uint256& txid)
+bool CZBittoriumStake::MarkSpent(CWallet *pwallet, const uint256& txid)
 {
-    CzbittoriumTracker* zbittoriumTracker = pwallet->zbittoriumTracker.get();
+    CZBittoriumTracker* zbittoriumTracker = pwallet->zbittoriumTracker.get();
     CMintMeta meta;
     if (!zbittoriumTracker->GetMetaFromStakeHash(hashSerial, meta))
         return error("%s: tracker does not have serialhash", __func__);
@@ -166,31 +166,31 @@ bool CZbittoriumStake::MarkSpent(CWallet *pwallet, const uint256& txid)
 }
 
 //!bittorium Stake
-bool CbittoriumStake::SetInput(CTransaction txPrev, unsigned int n)
+bool CBittoriumStake::SetInput(CTransaction txPrev, unsigned int n)
 {
     this->txFrom = txPrev;
     this->nPosition = n;
     return true;
 }
 
-bool CbittoriumStake::GetTxFrom(CTransaction& tx)
+bool CBittoriumStake::GetTxFrom(CTransaction& tx)
 {
     tx = txFrom;
     return true;
 }
 
-bool CbittoriumStake::CreateTxIn(CWallet* pwallet, CTxIn& txIn, uint256 hashTxOut)
+bool CBittoriumStake::CreateTxIn(CWallet* pwallet, CTxIn& txIn, uint256 hashTxOut)
 {
     txIn = CTxIn(txFrom.GetHash(), nPosition);
     return true;
 }
 
-CAmount CbittoriumStake::GetValue()
+CAmount CBittoriumStake::GetValue()
 {
     return txFrom.vout[nPosition].nValue;
 }
 
-bool CbittoriumStake::CreateTxOuts(CWallet* pwallet, vector<CTxOut>& vout, CAmount nTotal)
+bool CBittoriumStake::CreateTxOuts(CWallet* pwallet, vector<CTxOut>& vout, CAmount nTotal)
 {
     vector<valtype> vSolutions;
     txnouttype whichType;
@@ -225,7 +225,7 @@ bool CbittoriumStake::CreateTxOuts(CWallet* pwallet, vector<CTxOut>& vout, CAmou
     return true;
 }
 
-bool CbittoriumStake::GetModifier(uint64_t& nStakeModifier)
+bool CBittoriumStake::GetModifier(uint64_t& nStakeModifier)
 {
     int nStakeModifierHeight = 0;
     int64_t nStakeModifierTime = 0;
@@ -239,7 +239,7 @@ bool CbittoriumStake::GetModifier(uint64_t& nStakeModifier)
     return true;
 }
 
-CDataStream CbittoriumStake::GetUniqueness()
+CDataStream CBittoriumStake::GetUniqueness()
 {
     //The unique identifier for a bittorium stake is the outpoint
     CDataStream ss(SER_NETWORK, 0);
@@ -248,7 +248,7 @@ CDataStream CbittoriumStake::GetUniqueness()
 }
 
 //The block that the UTXO was added to the chain
-CBlockIndex* CbittoriumStake::GetIndexFrom()
+CBlockIndex* CBittoriumStake::GetIndexFrom()
 {
     uint256 hashBlock = 0;
     CTransaction tx;

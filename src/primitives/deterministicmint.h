@@ -1,10 +1,10 @@
 // Copyright (c) 2018 The PIVX developers
-// Copyright (c) 2019-2020 The Bittorium developers
+// Copyright (c) 2019 The Bittorium developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef bittorium_DETERMINISTICMINT_H
-#define bittorium_DETERMINISTICMINT_H
+#ifndef BITTORIUM_DETERMINISTICMINT_H
+#define BITTORIUM_DETERMINISTICMINT_H
 
 #include <libzerocoin/Denominations.h>
 #include <uint256.h>
@@ -65,4 +65,4 @@ public:
     };
 };
 
-#endif //bittorium_DETERMINISTICMINT_H
+#endif //BITTORIUM_DETERMINISTICMINT_H

@@ -2,7 +2,7 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2018 The PIVX developers
-// Copright (c) 2019-2020 The Bittorium Developers 
+// Copyright (c) 2019 The Bittorium Developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -1455,8 +1455,8 @@ int CWallet::ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate)
 {
     int ret = 0;
     int64_t nNow = GetTime();
-    bool fCheckZbittorium = GetBoolArg("-zapwallettxes", false);
-    if (fCheckZbittorium)
+    bool fCheckZBittorium = GetBoolArg("-zapwallettxes", false);
+    if (fCheckZBittorium)
         zbittoriumTracker->Init();
 
     CBlockIndex* pindex = pindexStart;
@@ -1484,7 +1484,7 @@ int CWallet::ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate)
             }
 
             //If this is a zapwallettx, need to readd zbittorium
-            if (fCheckZbittorium && pindex->nHeight >= Params().Zerocoin_StartHeight()) {
+            if (fCheckZBittorium && pindex->nHeight >= Params().Zerocoin_StartHeight()) {
                 list<CZerocoinMint> listMints;
                 BlockToZerocoinMintList(block, listMints, true);
 
@@ -2134,7 +2134,7 @@ bool CWallet::SelectStakeCoins(std::list<std::unique_ptr<CStakeInput> >& listInp
             //add to our stake set
             nAmountSelected += out.tx->vout[out.i].nValue;
 
-            std::unique_ptr<CbittoriumStake> input(new CbittoriumStake());
+            std::unique_ptr<CBittoriumStake> input(new CBittoriumStake());
             input->SetInput((CTransaction) *out.tx, out.i);
             listInputs.emplace_back(std::move(input));
         }
@@ -2164,7 +2164,7 @@ bool CWallet::SelectStakeCoins(std::list<std::unique_ptr<CStakeInput> >& listInp
             if (meta.nVersion < CZerocoinMint::STAKABLE_VERSION)
                 continue;
             if (meta.nHeight < chainActive.Height() - Params().Zerocoin_RequiredStakeDepth()) {
-                std::unique_ptr<CZbittoriumStake> input(new CZbittoriumStake(meta.denom, meta.hashStake));
+                std::unique_ptr<CZBittoriumStake> input(new CZBittoriumStake(meta.denom, meta.hashStake));
                 listInputs.emplace_back(std::move(input));
             }
         }
@@ -2177,7 +2177,7 @@ bool CWallet::MintableCoins()
 {
     LOCK(cs_main);
     CAmount nBalance = GetBalance();
-    CAmount nZbittoriumBalance = GetZerocoinBalance(false);
+    CAmount nZBittoriumBalance = GetZerocoinBalance(false);
 
     // Regular bittorium
     if (nBalance > 0) {
@@ -2203,7 +2203,7 @@ bool CWallet::MintableCoins()
     }
 
     // zbittorium
-    if (nZbittoriumBalance > 0) {
+    if (nZBittoriumBalance > 0) {
         set<CMintMeta> setMints = zbittoriumTracker->ListMints(true, true, true);
         for (auto mint : setMints) {
             if (mint.nVersion < CZerocoinMint::STAKABLE_VERSION)
@@ -3037,7 +3037,7 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
             txNew.vout.insert(txNew.vout.end(), vout.begin(), vout.end());
 
             CAmount nMinFee = 0;
-            if (!stakeInput->IsZbittorium()) {
+            if (!stakeInput->IsZBittorium()) {
                 // Set output amount
                 if (txNew.vout.size() == 3) {
                     txNew.vout[1].nValue = ((nCredit - nMinFee) / 2 / CENT) * CENT;
@@ -3052,7 +3052,7 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
                 return error("CreateCoinStake : exceeded coinstake size limit");
 
             //Masternode payment
-            FillBlockPayee(txNew, nMinFee, true, stakeInput->IsZbittorium());
+            FillBlockPayee(txNew, nMinFee, true, stakeInput->IsZBittorium());
 
             uint256 hashTxOut = txNew.GetHash();
             CTxIn in;
@@ -3065,8 +3065,8 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
             txNew.vin.emplace_back(in);
 
             //Mark mints as spent
-            if (stakeInput->IsZbittorium()) {
-                CZbittoriumStake* z = (CZbittoriumStake*)stakeInput.get();
+            if (stakeInput->IsZBittorium()) {
+                CZBittoriumStake* z = (CZBittoriumStake*)stakeInput.get();
                 if (!z->MarkSpent(this, txNew.GetHash()))
                     return error("%s: failed to mark mint as used\n", __func__);
             }
@@ -4532,11 +4532,11 @@ bool CWallet::GetZerocoinKey(const CBigNum& bnSerial, CKey& key)
     return mint.GetKeyPair(key);
 }
 
-bool CWallet::CreateZbittoriumOutPut(libzerocoin::CoinDenomination denomination, CTxOut& outMint, CDeterministicMint& dMint)
+bool CWallet::CreateZBittoriumOutPut(libzerocoin::CoinDenomination denomination, CTxOut& outMint, CDeterministicMint& dMint)
 {
     // mint a new coin (create Pedersen Commitment) and extract PublicCoin that is shareable from it
     libzerocoin::PrivateCoin coin(Params().Zerocoin_Params(false), denomination, false);
-    zwalletMain->GenerateDeterministicZbittorium(denomination, coin, dMint);
+    zwalletMain->GenerateDeterministicZBittorium(denomination, coin, dMint);
 
     libzerocoin::PublicCoin pubCoin = coin.getPublicCoin();
 
@@ -4581,7 +4581,7 @@ bool CWallet::CreateZerocoinMintTransaction(const CAmount nValue, CMutableTransa
 
         CTxOut outMint;
         CDeterministicMint dMint;
-        if (!CreateZbittoriumOutPut(denomination, outMint, dMint)) {
+        if (!CreateZBittoriumOutPut(denomination, outMint, dMint)) {
             strFailReason = strprintf("%s: failed to create new zbittorium output", __func__);
             return error(strFailReason.c_str());
         }
@@ -4648,7 +4648,7 @@ bool CWallet::MintToTxIn(CZerocoinMint zerocoinSelected, int nSecurityLevel, con
                          CZerocoinSpendReceipt& receipt, libzerocoin::SpendType spendType, CBlockIndex* pindexCheckpoint)
 {
     // Default error status if not changed below
-    receipt.SetStatus(_("Transaction Mint Started"), Zbittorium_TXMINT_GENERAL);
+    receipt.SetStatus(_("Transaction Mint Started"), ZBTOR_TXMINT_GENERAL);
     libzerocoin::ZerocoinParams* paramsAccumulator = Params().Zerocoin_Params(false);
 
     bool isV1Coin = libzerocoin::ExtractVersionFromSerial(zerocoinSelected.GetSerialNumber()) < libzerocoin::PrivateCoin::PUBKEY_VERSION;
@@ -4660,7 +4660,7 @@ bool CWallet::MintToTxIn(CZerocoinMint zerocoinSelected, int nSecurityLevel, con
     libzerocoin::PublicCoin pubCoinSelected(paramsCoin, zerocoinSelected.GetValue(), denomination);
     //LogPrintf("%s : selected mint %s\n pubcoinhash=%s\n", __func__, zerocoinSelected.ToString(), GetPubCoinHash(zerocoinSelected.GetValue()).GetHex());
     if (!pubCoinSelected.validate()) {
-        receipt.SetStatus(_("The selected mint coin is an invalid coin"), Zbittorium_INVALID_COIN);
+        receipt.SetStatus(_("The selected mint coin is an invalid coin"), ZBTOR_INVALID_COIN);
         return false;
     }
 
@@ -4670,7 +4670,7 @@ bool CWallet::MintToTxIn(CZerocoinMint zerocoinSelected, int nSecurityLevel, con
     string strFailReason = "";
     int nMintsAdded = 0;
     if (!GenerateAccumulatorWitness(pubCoinSelected, accumulator, witness, nSecurityLevel, nMintsAdded, strFailReason, pindexCheckpoint)) {
-        receipt.SetStatus(_("Try to spend with a higher security level to include more coins"), Zbittorium_FAILED_ACCUMULATOR_INITIALIZATION);
+        receipt.SetStatus(_("Try to spend with a higher security level to include more coins"), ZBTOR_FAILED_ACCUMULATOR_INITIALIZATION);
         return error("%s : %s", __func__, receipt.GetStatusMessage());
     }
 
@@ -4704,7 +4704,7 @@ bool CWallet::MintToTxIn(CZerocoinMint zerocoinSelected, int nSecurityLevel, con
         LogPrintf("%s\n", spend.ToString());
 
         if (!spend.Verify(accumulator)) {
-            receipt.SetStatus(_("The new spend coin transaction did not verify"), Zbittorium_INVALID_WITNESS);
+            receipt.SetStatus(_("The new spend coin transaction did not verify"), ZBTOR_INVALID_WITNESS);
             //return false;
             LogPrintf("** spend.verify failed, trying with different params\n");
 
@@ -4733,19 +4733,19 @@ bool CWallet::MintToTxIn(CZerocoinMint zerocoinSelected, int nSecurityLevel, con
         try {
             serializedCoinSpendChecking << spend;
         } catch (...) {
-            receipt.SetStatus(_("Failed to deserialize"), Zbittorium_BAD_SERIALIZATION);
+            receipt.SetStatus(_("Failed to deserialize"), ZBTOR_BAD_SERIALIZATION);
             return false;
         }
 
         libzerocoin::CoinSpend newSpendChecking(paramsCoin, paramsAccumulator, serializedCoinSpendChecking);
         if (!newSpendChecking.Verify(accumulator)) {
-            receipt.SetStatus(_("The transaction did not verify"), Zbittorium_BAD_SERIALIZATION);
+            receipt.SetStatus(_("The transaction did not verify"), ZBTOR_BAD_SERIALIZATION);
             return false;
         }
 
         if (IsSerialKnown(spend.getCoinSerialNumber())) {
             //Tried to spend an already spent zbittorium
-            receipt.SetStatus(_("The coin spend has been used"), Zbittorium_SPENT_USED_Zbittorium);
+            receipt.SetStatus(_("The coin spend has been used"), ZBTOR_SPENT_USED_ZBTOR);
 
             uint256 hashSerial = GetSerialHash(spend.getCoinSerialNumber());
             if (!zbittoriumTracker->HasSerialHash(hashSerial))
@@ -4765,11 +4765,11 @@ bool CWallet::MintToTxIn(CZerocoinMint zerocoinSelected, int nSecurityLevel, con
         zcSpend.SetMintCount(nMintsAdded);
         receipt.AddSpend(zcSpend);
     } catch (const std::exception&) {
-        receipt.SetStatus(_("CoinSpend: Accumulator witness does not verify"), Zbittorium_INVALID_WITNESS);
+        receipt.SetStatus(_("CoinSpend: Accumulator witness does not verify"), ZBTOR_INVALID_WITNESS);
         return false;
     }
 
-    receipt.SetStatus(_("Spend Valid"), Zbittorium_SPEND_OKAY); // Everything okay
+    receipt.SetStatus(_("Spend Valid"), ZBTOR_SPEND_OKAY); // Everything okay
 
     return true;
 }
@@ -4777,7 +4777,7 @@ bool CWallet::MintToTxIn(CZerocoinMint zerocoinSelected, int nSecurityLevel, con
 bool CWallet::CreateZerocoinSpendTransaction(CAmount nValue, int nSecurityLevel, CWalletTx& wtxNew, CReserveKey& reserveKey, CZerocoinSpendReceipt& receipt, vector<CZerocoinMint>& vSelectedMints, vector<CDeterministicMint>& vNewMints, bool fMintChange,  bool fMinimizeChange, CBitcoinAddress* address)
 {
     // Check available funds
-    int nStatus = Zbittorium_TRX_FUNDS_PROBLEMS;
+    int nStatus = ZBTOR_TRX_FUNDS_PROBLEMS;
     if (nValue > GetZerocoinBalance(true)) {
         receipt.SetStatus(_("You don't have enough Zerocoins in your wallet"), nStatus);
         return false;
@@ -4789,7 +4789,7 @@ bool CWallet::CreateZerocoinSpendTransaction(CAmount nValue, int nSecurityLevel,
     }
 
     // Create transaction
-    nStatus = Zbittorium_TRX_CREATE;
+    nStatus = ZBTOR_TRX_CREATE;
 
     // If not already given pre-selected mints, then select mints from the wallet
     CWalletDB walletdb(pwalletMain->strWalletFile);
@@ -4892,7 +4892,7 @@ bool CWallet::CreateZerocoinSpendTransaction(CAmount nValue, int nSecurityLevel,
     for (const auto& mint : vSelectedMints) {
         if (mint.GetVersion() < libzerocoin::PrivateCoin::PUBKEY_VERSION) {
             if (nSecurityLevel < 100) {
-                nStatus = Zbittorium_SPEND_V1_SEC_LEVEL;
+                nStatus = ZBTOR_SPEND_V1_SEC_LEVEL;
                 receipt.SetStatus(_("Version 1 zbittorium require a security level of 100 to successfully spend."), nStatus);
                 return false;
             }
@@ -4905,7 +4905,7 @@ bool CWallet::CreateZerocoinSpendTransaction(CAmount nValue, int nSecurityLevel,
     }
 
     // Create change if needed
-    nStatus = Zbittorium_TRX_CHANGE;
+    nStatus = ZBTOR_TRX_CHANGE;
 
     CMutableTransaction txNew;
     wtxNew.BindWallet(this);
@@ -4980,7 +4980,7 @@ bool CWallet::CreateZerocoinSpendTransaction(CAmount nValue, int nSecurityLevel,
             // Limit size
             unsigned int nBytes = ::GetSerializeSize(txNew, SER_NETWORK, PROTOCOL_VERSION);
             if (nBytes >= MAX_ZEROCOIN_TX_SIZE) {
-                receipt.SetStatus(_("In rare cases, a spend with 7 coins exceeds our maximum allowable transaction size, please retry spend using 6 or less coins"), Zbittorium_TX_TOO_LARGE);
+                receipt.SetStatus(_("In rare cases, a spend with 7 coins exceeds our maximum allowable transaction size, please retry spend using 6 or less coins"), ZBTOR_TX_TOO_LARGE);
                 return false;
             }
 
@@ -5002,7 +5002,7 @@ bool CWallet::CreateZerocoinSpendTransaction(CAmount nValue, int nSecurityLevel,
         }
     }
 
-    receipt.SetStatus(_("Transaction Created"), Zbittorium_SPEND_OKAY); // Everything okay
+    receipt.SetStatus(_("Transaction Created"), ZBTOR_SPEND_OKAY); // Everything okay
 
     return true;
 }
@@ -5034,7 +5034,7 @@ string CWallet::ResetMintZerocoin()
             LogPrintf("%s: failed to archive mint\n", __func__);
     }
 
-    NotifyzbittoriumReset();
+    NotifyZBittoriumReset();
 
     string strResult = _("ResetMintZerocoin finished: ") + to_string(updates) + _(" mints updated, ") + to_string(deletions) + _(" mints deleted\n");
     return strResult;
@@ -5074,7 +5074,7 @@ string CWallet::ResetSpentZerocoin()
         }
     }
 
-    NotifyzbittoriumReset();
+    NotifyZBittoriumReset();
 
     string strResult = _("ResetSpentZerocoin finished: ") + to_string(removed) + _(" unconfirmed transactions removed\n");
     return strResult;
@@ -5154,7 +5154,7 @@ string CWallet::GetUniqueWalletBackupName(bool fzbittoriumAuto) const
     return strprintf("wallet%s.dat%s", fzbittoriumAuto ? "-autozbittoriumbackup" : "", DateTimeStrFormat(".%Y-%m-%d-%H-%M", GetTime()));
 }
 
-void CWallet::ZbittoriumBackupWallet()
+void CWallet::ZBittoriumBackupWallet()
 {
     filesystem::path backupDir = GetDataDir() / "backups";
     filesystem::path backupPath;
@@ -5275,7 +5275,7 @@ string CWallet::MintZerocoin(CAmount nValue, CWalletTx& wtxNew, vector<CDetermin
 
     //Create a backup of the wallet
     if (fBackupMints)
-        ZbittoriumBackupWallet();
+        ZBittoriumBackupWallet();
 
     return "";
 }
@@ -5283,10 +5283,10 @@ string CWallet::MintZerocoin(CAmount nValue, CWalletTx& wtxNew, vector<CDetermin
 bool CWallet::SpendZerocoin(CAmount nAmount, int nSecurityLevel, CWalletTx& wtxNew, CZerocoinSpendReceipt& receipt, vector<CZerocoinMint>& vMintsSelected, bool fMintChange, bool fMinimizeChange, CBitcoinAddress* addressTo)
 {
     // Default: assume something goes wrong. Depending on the problem this gets more specific below
-    int nStatus = Zbittorium_SPEND_ERROR;
+    int nStatus = ZBTOR_SPEND_ERROR;
 
     if (IsLocked()) {
-        receipt.SetStatus("Error: Wallet locked, unable to create transaction!", Zbittorium_WALLET_LOCKED);
+        receipt.SetStatus("Error: Wallet locked, unable to create transaction!", ZBTOR_WALLET_LOCKED);
         return false;
     }
 
@@ -5297,12 +5297,12 @@ bool CWallet::SpendZerocoin(CAmount nAmount, int nSecurityLevel, CWalletTx& wtxN
     }
 
     if (fMintChange && fBackupMints)
-        ZbittoriumBackupWallet();
+        ZBittoriumBackupWallet();
 
     CWalletDB walletdb(pwalletMain->strWalletFile);
     if (!CommitTransaction(wtxNew, reserveKey)) {
         LogPrintf("%s: failed to commit\n", __func__);
-        nStatus = Zbittorium_COMMIT_FAILED;
+        nStatus = ZBTOR_COMMIT_FAILED;
 
         //reset all mints
         for (CZerocoinMint mint : vMintsSelected) {
@@ -5314,7 +5314,7 @@ bool CWallet::SpendZerocoin(CAmount nAmount, int nSecurityLevel, CWalletTx& wtxN
         //erase spends
         for (CZerocoinSpend spend : receipt.GetSpends()) {
             if (!walletdb.EraseZerocoinSpendSerialEntry(spend.GetSerial())) {
-                receipt.SetStatus("Error: It cannot delete coin serial number in wallet", Zbittorium_ERASE_SPENDS_FAILED);
+                receipt.SetStatus("Error: It cannot delete coin serial number in wallet", ZBTOR_ERASE_SPENDS_FAILED);
             }
 
             //Remove from public zerocoinDB
@@ -5324,7 +5324,7 @@ bool CWallet::SpendZerocoin(CAmount nAmount, int nSecurityLevel, CWalletTx& wtxN
         // erase new mints
         for (auto& dMint : vNewMints) {
             if (!walletdb.EraseDeterministicMint(dMint.GetPubcoinHash())) {
-                receipt.SetStatus("Error: Unable to cannot delete zerocoin mint in wallet", Zbittorium_ERASE_NEW_MINTS_FAILED);
+                receipt.SetStatus("Error: Unable to delete zerocoin mint in wallet", ZBTOR_ERASE_NEW_MINTS_FAILED);
             }
         }
 
@@ -5351,7 +5351,7 @@ bool CWallet::SpendZerocoin(CAmount nAmount, int nSecurityLevel, CWalletTx& wtxN
         zbittoriumTracker->Add(dMint, true);
     }
 
-    receipt.SetStatus("Spend Successful", Zbittorium_SPEND_OKAY);  // When we reach this point spending zbittorium was successful
+    receipt.SetStatus("Spend Successful", ZBTOR_SPEND_OKAY);  // When we reach this point spending zbittorium was successful
 
     return true;
 }

@@ -10,7 +10,7 @@
 * @license    This project is released under the MIT license.
 **/
 // Copyright (c) 2017 The PIVX developers
-// Copyright (c) 2019-2020 The Bittorium developers
+// Copyright (c) 2019 The Bittorium developers
 
 #ifndef PARAMS_H_
 #define PARAMS_H_

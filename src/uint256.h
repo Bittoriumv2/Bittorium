@@ -2,12 +2,12 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2018 The PIVX developers
-// Copyright (c) 2019-2020 The Bittorium developers
+// Copyright (c) 2019 The Bittorium developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef bittorium_UINT256_H
-#define bittorium _UINT256_H
+#ifndef BITTORIUM_UINT256_H
+#define BITTORIUM_UINT256_H
 
 #include <assert.h>
 #include <cstring>
@@ -411,4 +411,4 @@ inline uint512 uint512S(const std::string& str)
     return rv;
 }
 
-#endif // bittorium _UINT256_H
+#endif // BITTORIUM_UINT256_H

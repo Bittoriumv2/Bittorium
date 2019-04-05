@@ -1,12 +1,12 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2016-2018 The PIVX developers
-// Copyright (c) 2019-2020 The Bittorium developers
+// Copyright (c) 2019 The Bittorium developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef bittorium_PUBKEY_H
-#define bittorium_PUBKEY_H
+#ifndef BITTORIUM_PUBKEY_H
+#define BITTORIUM_PUBKEY_H
 
 #include "hash.h"
 #include "serialize.h"
@@ -264,4 +264,4 @@ public:
     ~ECCVerifyHandle();
 };
 
-#endif // bittorium_PUBKEY_H
+#endif // BITTORIUM_PUBKEY_H

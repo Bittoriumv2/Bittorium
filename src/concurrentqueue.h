@@ -1,11 +1,11 @@
 //
 // Copyright (c) 2015-2018 The PIVX developers
-// Copyright (c) 2019-2020 The Bittorium developers
+// Copyright (c) 2019 The Bittorium developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef bittorium_CONCURRENTQUEUE_H
-#define bittorium_CONCURRENTQUEUE_H
+#ifndef BITTORIUM_CONCURRENTQUEUE_H
+#define BITTORIUM_CONCURRENTQUEUE_H
 
 
 #include <mutex>
@@ -49,4 +49,4 @@ public:
     }
 };
 
-#endif //bittorium_CONCURRENTQUEUE_H
+#endif //BITTORIUM_CONCURRENTQUEUE_H

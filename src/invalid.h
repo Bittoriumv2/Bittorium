@@ -1,12 +1,10 @@
 // Copyright (c) 2018 The PIVX developers
-// Copyright (c) 2019-2020 The Bittorium developers
+// Copyright (c) 2019 The Bittorium developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef bittorium_INVALID_H
-#define bittorium_INVALID_H
-
-#endif //bittorium_INVALID_H
+#ifndef BITTORIUM_INVALID_H
+#define BITTORIUM_INVALID_H
 
 #include <libzerocoin/bignum.h>
 #include <univalue/include/univalue.h>
@@ -24,3 +22,5 @@ namespace invalid_out
     bool LoadOutpoints();
     bool LoadSerials();
 }
+
+#endif //BITTORIUM_INVALID_H

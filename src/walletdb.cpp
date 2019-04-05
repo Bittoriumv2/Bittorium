@@ -2,7 +2,7 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2018 The PIVX developers
-// Copyright (c) 2019-2020 The Bittorium developers
+// Copyright (c) 2019 The Bittorium developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -1324,7 +1324,7 @@ bool CWalletDB::ReadCurrentSeedHash(uint256& hashSeed)
     return Read(string("seedhash"), hashSeed);
 }
 
-bool CWalletDB::WriteZbittoriumSeed(const uint256& hashSeed, const vector<unsigned char>& seed)
+bool CWalletDB::WriteZBittoriumSeed(const uint256& hashSeed, const vector<unsigned char>& seed)
 {
     if (!WriteCurrentSeedHash(hashSeed))
         return error("%s: failed to write current seed hash", __func__);
@@ -1332,13 +1332,13 @@ bool CWalletDB::WriteZbittoriumSeed(const uint256& hashSeed, const vector<unsign
     return Write(make_pair(string("dzs"), hashSeed), seed);
 }
 
-bool CWalletDB::EraseZbittoriumSeed()
+bool CWalletDB::EraseZBittoriumSeed()
 {
     uint256 hash;
     if(!ReadCurrentSeedHash(hash)){
         return error("Failed to read a current seed hash");
     }
-    if(!WriteZbittoriumSeed(hash, ToByteVector(base_uint<256>(0) << 256))) {
+    if(!WriteZBittoriumSeed(hash, ToByteVector(base_uint<256>(0) << 256))) {
         return error("Failed to write empty seed to wallet");
     }
     if(!WriteCurrentSeedHash(0)) {
@@ -1348,27 +1348,27 @@ bool CWalletDB::EraseZbittoriumSeed()
     return true;
 }
 
-bool CWalletDB::EraseZbittoriumSeed_deprecated()
+bool CWalletDB::EraseZBittoriumSeed_deprecated()
 {
     return Erase(string("dzs"));
 }
 
-bool CWalletDB::ReadZbittoriumSeed(const uint256& hashSeed, vector<unsigned char>& seed)
+bool CWalletDB::ReadZBittoriumSeed(const uint256& hashSeed, vector<unsigned char>& seed)
 {
     return Read(make_pair(string("dzs"), hashSeed), seed);
 }
 
-bool CWalletDB::ReadZbittoriumSeed_deprecated(uint256& seed)
+bool CWalletDB::ReadZBittoriumSeed_deprecated(uint256& seed)
 {
     return Read(string("dzs"), seed);
 }
 
-bool CWalletDB::WriteZbittoriumCount(const uint32_t& nCount)
+bool CWalletDB::WriteZBittoriumCount(const uint32_t& nCount)
 {
     return Write(string("dzc"), nCount);
 }
 
-bool CWalletDB::ReadZbittoriumCount(uint32_t& nCount)
+bool CWalletDB::ReadZBittoriumCount(uint32_t& nCount)
 {
     return Read(string("dzc"), nCount);
 }

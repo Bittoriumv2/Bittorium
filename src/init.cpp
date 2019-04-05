@@ -2,7 +2,7 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2018 The PIVX developers
-// Copyright (c) 2019-2020 The Bittorium developers
+// Copyright (c) 2019 The Bittorium developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -41,7 +41,7 @@
 #include "util.h"
 #include "utilmoneystr.h"
 #include "validationinterface.h"
-#include "zpivchain.h"
+#include "zbittoriumchain.h"
 
 #ifdef ENABLE_WALLET
 #include "db.h"
@@ -75,7 +75,7 @@ using namespace std;
 
 #ifdef ENABLE_WALLET
 CWallet* pwalletMain = NULL;
-CzPIVWallet* zwalletMain = NULL;
+CZBittoriumWallet* zwalletMain = NULL;
 int nWalletBackups = 10;
 #endif
 volatile bool fFeeEstimatesInitialized = false;
@@ -293,7 +293,7 @@ void Shutdown()
     StopTorControl();
     // Shutdown witness thread if it's enabled
     if (nLocalServices == NODE_BLOOM_LIGHT_ZC) {
-        lightWorker.StopLightZpivThread();
+        lightWorker.StopLightZBittoriumThread();
     }
 #ifdef ENABLE_WALLET
     delete pwalletMain;
@@ -393,7 +393,7 @@ std::string HelpMessage(HelpMessageMode mode)
 #endif
     strUsage += HelpMessageOpt("-reindex", _("Rebuild block chain index from current blk000??.dat files") + " " + _("on startup"));
     strUsage += HelpMessageOpt("-reindexaccumulators", _("Reindex the accumulator database") + " " + _("on startup"));
-    strUsage += HelpMessageOpt("-reindexmoneysupply", _("Reindex the PIV and zPIV money supply statistics") + " " + _("on startup"));
+    strUsage += HelpMessageOpt("-reindexmoneysupply", _("Reindex the BTOR and zBTOR money supply statistics") + " " + _("on startup"));
     strUsage += HelpMessageOpt("-resync", _("Delete blockchain folders and resync from scratch") + " " + _("on startup"));
 #if !defined(WIN32)
     strUsage += HelpMessageOpt("-sysperms", _("Create new files with system default permissions, instead of umask 077 (only effective with disabled wallet functionality)"));
@@ -449,9 +449,9 @@ std::string HelpMessage(HelpMessageMode mode)
     strUsage += HelpMessageOpt("-disablewallet", _("Do not load the wallet and disable wallet RPC calls"));
     strUsage += HelpMessageOpt("-keypool=<n>", strprintf(_("Set key pool size to <n> (default: %u)"), 100));
     if (GetBoolArg("-help-debug", false))
-        strUsage += HelpMessageOpt("-mintxfee=<amt>", strprintf(_("Fees (in PIV/Kb) smaller than this are considered zero fee for transaction creation (default: %s)"),
+        strUsage += HelpMessageOpt("-mintxfee=<amt>", strprintf(_("Fees (in BTOR/Kb) smaller than this are considered zero fee for transaction creation (default: %s)"),
             FormatMoney(CWallet::minTxFee.GetFeePerK())));
-    strUsage += HelpMessageOpt("-paytxfee=<amt>", strprintf(_("Fee (in PIV/kB) to add to transactions you send (default: %s)"), FormatMoney(payTxFee.GetFeePerK())));
+    strUsage += HelpMessageOpt("-paytxfee=<amt>", strprintf(_("Fee (in BTOR/kB) to add to transactions you send (default: %s)"), FormatMoney(payTxFee.GetFeePerK())));
     strUsage += HelpMessageOpt("-rescan", _("Rescan the block chain for missing wallet transactions") + " " + _("on startup"));
     strUsage += HelpMessageOpt("-salvagewallet", _("Attempt to recover private keys from a corrupt wallet.dat") + " " + _("on startup"));
     strUsage += HelpMessageOpt("-sendfreetransactions", strprintf(_("Send transactions as zero-fee transactions if possible (default: %u)"), 0));
@@ -514,7 +514,7 @@ std::string HelpMessage(HelpMessageMode mode)
         strUsage += HelpMessageOpt("-relaypriority", strprintf(_("Require high priority for relaying free or low-fee transactions (default:%u)"), 1));
         strUsage += HelpMessageOpt("-maxsigcachesize=<n>", strprintf(_("Limit size of signature cache to <n> entries (default: %u)"), 50000));
     }
-    strUsage += HelpMessageOpt("-minrelaytxfee=<amt>", strprintf(_("Fees (in PIV/Kb) smaller than this are considered zero fee for relaying (default: %s)"), FormatMoney(::minRelayTxFee.GetFeePerK())));
+    strUsage += HelpMessageOpt("-minrelaytxfee=<amt>", strprintf(_("Fees (in BTOR/Kb) smaller than this are considered zero fee for relaying (default: %s)"), FormatMoney(::minRelayTxFee.GetFeePerK())));
     strUsage += HelpMessageOpt("-printtoconsole", strprintf(_("Send trace/debug info to console instead of debug.log file (default: %u)"), 0));
     if (GetBoolArg("-help-debug", false)) {
         strUsage += HelpMessageOpt("-printpriority", strprintf(_("Log transaction priority and fee per kB when mining blocks (default: %u)"), 0));
@@ -530,8 +530,8 @@ std::string HelpMessage(HelpMessageMode mode)
 #ifdef ENABLE_WALLET
     strUsage += HelpMessageGroup(_("Staking options:"));
     strUsage += HelpMessageOpt("-staking=<n>", strprintf(_("Enable staking functionality (0-1, default: %u)"), 1));
-    strUsage += HelpMessageOpt("-pivstake=<n>", strprintf(_("Enable or disable staking functionality for PIV inputs (0-1, default: %u)"), 1));
-    strUsage += HelpMessageOpt("-zpivstake=<n>", strprintf(_("Enable or disable staking functionality for zPIV inputs (0-1, default: %u)"), 1));
+    strUsage += HelpMessageOpt("-btorstake=<n>", strprintf(_("Enable or disable staking functionality for BTOR inputs (0-1, default: %u)"), 1));
+    strUsage += HelpMessageOpt("-zbtorstake=<n>", strprintf(_("Enable or disable staking functionality for zBTOR inputs (0-1, default: %u)"), 1));
     strUsage += HelpMessageOpt("-reservebalance=<amt>", _("Keep the specified amount available for spending at all times (default: 0)"));
     if (GetBoolArg("-help-debug", false)) {
         strUsage += HelpMessageOpt("-printstakemodifier", _("Display the stake modifier calculations in the debug.log file."));
@@ -553,12 +553,12 @@ std::string HelpMessage(HelpMessageMode mode)
     strUsage += HelpMessageOpt("-enableautoconvertaddress=<n>", strprintf(_("Enable automatic Zerocoin minting from specific addresses (0-1, default: %u)"), DEFAULT_AUTOCONVERTADDRESS));
     strUsage += HelpMessageOpt("-zeromintpercentage=<n>", strprintf(_("Percentage of automatically minted Zerocoin  (1-100, default: %u)"), 10));
     strUsage += HelpMessageOpt("-preferredDenom=<n>", strprintf(_("Preferred Denomination for automatically minted Zerocoin  (1/5/10/50/100/500/1000/5000), 0 for no preference. default: %u)"), 0));
-    strUsage += HelpMessageOpt("-backupzpiv=<n>", strprintf(_("Enable automatic wallet backups triggered after each zPIV minting (0-1, default: %u)"), 1));
-    strUsage += HelpMessageOpt("-zpivbackuppath=<dir|file>", _("Specify custom backup path to add a copy of any automatic zPIV backup. If set as dir, every backup generates a timestamped file. If set as file, will rewrite to that file every backup. If backuppath is set as well, 4 backups will happen"));
+    strUsage += HelpMessageOpt("-backupzbtor=<n>", strprintf(_("Enable automatic wallet backups triggered after each zBTOR minting (0-1, default: %u)"), 1));
+    strUsage += HelpMessageOpt("-zbtorbackuppath=<dir|file>", _("Specify custom backup path to add a copy of any automatic zBTOR backup. If set as dir, every backup generates a timestamped file. If set as file, will rewrite to that file every backup. If backuppath is set as well, 4 backups will happen"));
 #endif // ENABLE_WALLET
     strUsage += HelpMessageOpt("-reindexzerocoin=<n>", strprintf(_("Delete all zerocoin spends and mints that have been recorded to the blockchain database and reindex them (0-1, default: %u)"), 0));
 
-//    strUsage += "  -anonymizebittoriumamount=<n>     " + strprintf(_("Keep N PIV anonymized (default: %u)"), 0) + "\n";
+//    strUsage += "  -anonymizebittoriumamount=<n>     " + strprintf(_("Keep N BTOR anonymized (default: %u)"), 0) + "\n";
 //    strUsage += "  -liquidityprovider=<n>       " + strprintf(_("Provide liquidity to Obfuscation by infrequently mixing coins on a continual basis (0-100, default: %u, 1=very frequent, high fees, 100=very infrequent, low fees)"), 0) + "\n";
 
     strUsage += HelpMessageGroup(_("SwiftX options:"));
@@ -1494,10 +1494,10 @@ bool AppInit2()
                 // Recalculate money supply for blocks that are impacted by accounting issue after zerocoin activation
                 if (GetBoolArg("-reindexmoneysupply", false)) {
                     if (chainActive.Height() > Params().Zerocoin_StartHeight()) {
-                        RecalculateZPIVMinted();
-                        RecalculateZPIVSpent();
+                        RecalculateZBittoriumMinted();
+                        RecalculateZBittoriumSpent();
                     }
-                    RecalculatePIVSupply(1);
+                    RecalculateBittoriumSupply(1);
                 }
 
                 // Force recalculation of accumulators.
@@ -1657,7 +1657,7 @@ bool AppInit2()
 
         LogPrintf("%s", strErrors.str());
         LogPrintf(" wallet      %15dms\n", GetTimeMillis() - nStart);
-        zwalletMain = new CzPIVWallet(pwalletMain->strWalletFile);
+        zwalletMain = new CZBittoriumWallet(pwalletMain->strWalletFile);
         pwalletMain->setZWallet(zwalletMain);
 
         RegisterValidationInterface(pwalletMain);
@@ -1704,16 +1704,16 @@ bool AppInit2()
         }
         fVerifyingBlocks = false;
 
-        //Inititalize zPIVWallet
-        uiInterface.InitMessage(_("Syncing zPIV wallet..."));
+        //Inititalize zbittoriumWallet
+        uiInterface.InitMessage(_("Syncing zBTOR wallet..."));
 
         pwalletMain->InitAutoConvertAddresses();
 
-        bool fEnableZPivBackups = GetBoolArg("-backupzpiv", true);
-        pwalletMain->setZPivAutoBackups(fEnableZPivBackups);
+        bool fEnableZBittoriumBackups = GetBoolArg("-backupzbtor", true);
+        pwalletMain->setZBittoriumAutoBackups(fEnableZBittoriumBackups);
 
         //Load zerocoin mint hashes to memory
-        pwalletMain->zpivTracker->Init();
+        pwalletMain->zbittoriumTracker->Init();
         zwalletMain->LoadMintPoolFromDB();
         zwalletMain->SyncWithChain();
     }  // (!fDisableWallet)
@@ -1863,7 +1863,7 @@ bool AppInit2()
     }
 
 // XX42 Remove/refactor code below. Until then provide safe defaults
-    nAnonymizebittoriumAmount = 2;
+    nAnonymizeBittoriumAmount = 2;
 
 //    nLiquidityProvider = GetArg("-liquidityprovider", 0); //0-100
 //    if (nLiquidityProvider != 0) {
@@ -1872,9 +1872,9 @@ bool AppInit2()
 //        nZeromintPercentage = 99999;
 //    }
 //
-//    nAnonymizebittoriumAmount = GetArg("-anonymizebittoriumamount", 0);
-//    if (nAnonymizebittoriumAmount > 999999) nAnonymizebittoriumAmount = 999999;
-//    if (nAnonymizebittoriumAmount < 2) nAnonymizebittoriumAmount = 2;
+//    nAnonymizeBittoriumAmount = GetArg("-anonymizebittoriumamount", 0);
+//    if (nAnonymizeBittoriumAmount > 999999) nAnonymizeBittoriumAmount = 999999;
+//    if (nAnonymizeBittoriumAmount < 2) nAnonymizeBittoriumAmount = 2;
 
     fEnableSwiftTX = GetBoolArg("-enableswifttx", fEnableSwiftTX);
     nSwiftTXDepth = GetArg("-swifttxdepth", nSwiftTXDepth);
@@ -1888,7 +1888,7 @@ bool AppInit2()
 
     LogPrintf("fLiteMode %d\n", fLiteMode);
     LogPrintf("nSwiftTXDepth %d\n", nSwiftTXDepth);
-    LogPrintf("Anonymize bittorium Amount %d\n", nAnonymizebittoriumAmount);
+    LogPrintf("Anonymize bittorium Amount %d\n", nAnonymizeBittoriumAmount);
     LogPrintf("Budget Mode %s\n", strBudgetMode.c_str());
 
     /* Denominations
@@ -1897,8 +1897,8 @@ bool AppInit2()
        is convertable to another.
 
        For example:
-       1PIV+1000 == (.1PIV+100)*10
-       10PIV+10000 == (1PIV+1000)*10
+       1BTOR+1000 == (.1BTOR+100)*10
+       10BTOR+10000 == (1BTOR+1000)*10
     */
     obfuScationDenominations.push_back((10000 * COIN) + 10000000);
     obfuScationDenominations.push_back((1000 * COIN) + 1000000);
@@ -1941,7 +1941,7 @@ bool AppInit2()
 
     if (nLocalServices & NODE_BLOOM_LIGHT_ZC) {
         // Run a thread to compute witnesses
-        lightWorker.StartLightZpivThread(threadGroup);
+        lightWorker.StartLightZBittoriumThread(threadGroup);
     }
 
 #ifdef ENABLE_WALLET

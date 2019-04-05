@@ -2,7 +2,7 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2018 The PIVX developers
-// Copyright (c) 2019-2020 The Bittorium developers
+// Copyright (c) 2019 The Bittorium developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -94,23 +94,23 @@ enum AvailableCoinsType {
 
 // Possible states for zBTOR send
 enum ZerocoinSpendStatus {
-    Zbittorium_SPEND_OKAY = 0,                            // No error
-    Zbittorium_SPEND_ERROR = 1,                           // Unspecified class of errors, more details are (hopefully) in the returning text
-    Zbittorium_WALLET_LOCKED = 2,                         // Wallet was locked
-    Zbittorium_COMMIT_FAILED = 3,                         // Commit failed, reset status
-    Zbittorium_ERASE_SPENDS_FAILED = 4,                   // Erasing spends during reset failed
-    Zbittorium_ERASE_NEW_MINTS_FAILED = 5,                // Erasing new mints during reset failed
-    Zbittorium_TRX_FUNDS_PROBLEMS = 6,                    // Everything related to available funds
-    Zbittorium_TRX_CREATE = 7,                            // Everything related to create the transaction
-    Zbittorium_TRX_CHANGE = 8,                            // Everything related to transaction change
-    Zbittorium_TXMINT_GENERAL = 9,                        // General errors in MintToTxIn
-    Zbittorium_INVALID_COIN = 10,                         // Selected mint coin is not valid
-    Zbittorium_FAILED_ACCUMULATOR_INITIALIZATION = 11,    // Failed to initialize witness
-    Zbittorium_INVALID_WITNESS = 12,                      // Spend coin transaction did not verify
-    Zbittorium_BAD_SERIALIZATION = 13,                    // Transaction verification failed
-    Zbittorium_SPENT_USED_Zbittorium = 14,                      // Coin has already been spend
-    Zbittorium_TX_TOO_LARGE = 15,                          // The transaction is larger than the max tx size
-    Zbittorium_SPEND_V1_SEC_LEVEL                         // Spend is V1 and security level is not set to 100
+    ZBTOR_SPEND_OKAY = 0,                            // No error
+    ZBTOR_SPEND_ERROR = 1,                           // Unspecified class of errors, more details are (hopefully) in the returning text
+    ZBTOR_WALLET_LOCKED = 2,                         // Wallet was locked
+    ZBTOR_COMMIT_FAILED = 3,                         // Commit failed, reset status
+    ZBTOR_ERASE_SPENDS_FAILED = 4,                   // Erasing spends during reset failed
+    ZBTOR_ERASE_NEW_MINTS_FAILED = 5,                // Erasing new mints during reset failed
+    ZBTOR_TRX_FUNDS_PROBLEMS = 6,                    // Everything related to available funds
+    ZBTOR_TRX_CREATE = 7,                            // Everything related to create the transaction
+    ZBTOR_TRX_CHANGE = 8,                            // Everything related to transaction change
+    ZBTOR_TXMINT_GENERAL = 9,                        // General errors in MintToTxIn
+    ZBTOR_INVALID_COIN = 10,                         // Selected mint coin is not valid
+    ZBTOR_FAILED_ACCUMULATOR_INITIALIZATION = 11,    // Failed to initialize witness
+    ZBTOR_INVALID_WITNESS = 12,                      // Spend coin transaction did not verify
+    ZBTOR_BAD_SERIALIZATION = 13,                    // Transaction verification failed
+    ZBTOR_SPENT_USED_ZBTOR = 14,                     // Coin has already been spend
+    ZBTOR_TX_TOO_LARGE = 15,                         // The transaction is larger than the max tx size
+    ZBTOR_SPEND_V1_SEC_LEVEL                         // Spend is V1 and security level is not set to 100
 };
 
 struct CompactTallyItem {
@@ -216,9 +216,9 @@ public:
     std::string ResetMintZerocoin();
     std::string ResetSpentZerocoin();
     void ReconsiderZerocoins(std::list<CZerocoinMint>& listMintsRestored, std::list<CDeterministicMint>& listDMintsRestored);
-    void ZbittoriumBackupWallet();
+    void ZBittoriumBackupWallet();
     bool GetZerocoinKey(const CBigNum& bnSerial, CKey& key);
-    bool CreateZbittoriumOutPut(libzerocoin::CoinDenomination denomination, CTxOut& outMint, CDeterministicMint& dMint);
+    bool CreateZBittoriumOutPut(libzerocoin::CoinDenomination denomination, CTxOut& outMint, CDeterministicMint& dMint);
     bool GetMint(const uint256& hashSerial, CZerocoinMint& mint);
     bool GetMintFromStakeHash(const uint256& hashStake, CZerocoinMint& mint);
     bool DatabaseMint(CDeterministicMint& dMint);
@@ -241,7 +241,7 @@ public:
      */
     mutable CCriticalSection cs_wallet;
 
-    CzbittoriumWallet* zwalletMain;
+    CZBittoriumWallet* zwalletMain;
 
     std::set<CBitcoinAddress> setAutoConvertAddresses;
 
@@ -249,7 +249,7 @@ public:
     bool fWalletUnlockAnonymizeOnly;
     std::string strWalletFile;
     bool fBackupMints;
-    std::unique_ptr<CzbittoriumTracker> zbittoriumTracker;
+    std::unique_ptr<CZBittoriumTracker> zbittoriumTracker;
 
     std::set<int64_t> setKeyPool;
     std::map<CKeyID, CKeyMetadata> mapKeyMetadata;
@@ -334,20 +334,20 @@ public:
         return nZeromintPercentage;
     }
 
-    void setZWallet(CzbittoriumWallet* zwallet)
+    void setZWallet(CZBittoriumWallet* zwallet)
     {
         zwalletMain = zwallet;
-        zbittoriumTracker = std::unique_ptr<CzbittoriumTracker>(new CzbittoriumTracker(strWalletFile));
+        zbittoriumTracker = std::unique_ptr<CZBittoriumTracker>(new CZBittoriumTracker(strWalletFile));
     }
 
-    CzbittoriumWallet* getZWallet() { return zwalletMain; }
+    CZBittoriumWallet* getZWallet() { return zwalletMain; }
 
     bool isZeromintEnabled()
     {
         return fEnableZeromint || fEnableAutoConvert;
     }
 
-    void setZbittoriumAutoBackups(bool fEnabled)
+    void setZBittoriumAutoBackups(bool fEnabled)
     {
         fBackupMints = fEnabled;
     }
@@ -681,7 +681,7 @@ public:
     boost::signals2::signal<void(bool fHaveMultiSig)> NotifyMultiSigChanged;
 
     /** zbittorium reset */
-    boost::signals2::signal<void()> NotifyzbittoriumReset;
+    boost::signals2::signal<void()> NotifyZBittoriumReset;
 
     /** notify wallet file backed up */
     boost::signals2::signal<void (const bool& fSuccess, const std::string& filename)> NotifyWalletBacked;

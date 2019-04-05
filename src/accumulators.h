@@ -1,10 +1,10 @@
 // Copyright (c) 2017-2018 The PIVX developers
-// Copyright (c) 2019-2020 The Bittorium developers
+// Copyright (c) 2019 The Bittorium developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef bittorium_ACCUMULATORS_H
-#define bittorium_ACCUMULATORS_H
+#ifndef BITTORIUM_ACCUMULATORS_H
+#define BITTORIUM_ACCUMULATORS_H
 
 #include "libzerocoin/Accumulator.h"
 #include "libzerocoin/Coin.h"
@@ -90,4 +90,4 @@ public:
     searchMintHeightException(const string &message) : message(message) {}
 };
 
-#endif //bittorium_ACCUMULATORS_H
+#endif //BITTORIUM_ACCUMULATORS_H

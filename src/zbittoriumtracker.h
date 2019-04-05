@@ -1,18 +1,18 @@
 // Copyright (c) 2018 The PIVX developers
-// Copyright (c) 2019-2020 The Bittorium developers
+// Copyright (c) 2019 The Bittorium developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef bittorium_ZbittoriumTRACKER_H
-#define bittorium_ZbittoriumTRACKER_H
+#ifndef BITTORIUM_ZBITTORIUMTRACKER_H
+#define BITTORIUM_ZBITTORIUMTRACKER_H
 
 #include "primitives/zerocoin.h"
 #include <list>
 
 class CDeterministicMint;
-class CzbittoriumWallet;
+class CZBittoriumWallet;
 
-class CzbittoriumTracker
+class CZBittoriumTracker
 {
 private:
     bool fInitialized;
@@ -21,9 +21,9 @@ private:
     std::map<uint256, uint256> mapPendingSpends; //serialhash, txid of spend
     bool UpdateStatusInternal(const std::set<uint256>& setMempool, CMintMeta& mint);
 public:
-    CzbittoriumTracker(std::string strWalletFile);
-    ~CzbittoriumTracker();
-    void Add(const CDeterministicMint& dMint, bool isNew = false, bool isArchived = false, CzbittoriumWallet* zbittoriumWallet = NULL);
+    CZBittoriumTracker(std::string strWalletFile);
+    ~CZBittoriumTracker();
+    void Add(const CDeterministicMint& dMint, bool isNew = false, bool isArchived = false, CZBittoriumWallet* zbittoriumWallet = NULL);
     void Add(const CZerocoinMint& mint, bool isNew = false, bool isArchived = false);
     bool Archive(CMintMeta& meta);
     bool HasPubcoin(const CBigNum& bnValue) const;
@@ -50,4 +50,4 @@ public:
     void Clear();
 };
 
-#endif //bittorium_ZbittoriumTRACKER_H
+#endif //BITTORIUM_ZBITTORIUMTRACKER_H

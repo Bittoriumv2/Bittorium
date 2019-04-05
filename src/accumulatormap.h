@@ -1,10 +1,10 @@
 // Copyright (c) 2017-2018 The PIVX developers
-// Copyright (c) 2019-2020 The Bittorium developers
+// Copyright (c) 2019 The Bittorium developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef bittorium_ACCUMULATORMAP_H
-#define bittorium_ACCUMULATORMAP_H
+#ifndef BITTORIUM_ACCUMULATORMAP_H
+#define BITTORIUM_ACCUMULATORMAP_H
 
 #include "libzerocoin/Accumulator.h"
 #include "libzerocoin/Coin.h"
@@ -26,4 +26,4 @@ public:
     void Reset();
     void Reset(libzerocoin::ZerocoinParams* params2);
 };
-#endif //bittorium_ACCUMULATORMAP_H
+#endif //BITTORIUM_ACCUMULATORMAP_H

@@ -2,7 +2,7 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2018 The PIVX developers
-// Copyright (c) 2019-2020 The Bittorium developers
+// Copyright (c) 2019 The Bittorium developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -2048,7 +2048,7 @@ CAmount GetSeeSaw(const CAmount& blockValue, int nMasternodeCount, int nHeight)
     return ret;
 }
 
-int64_t GetMasternodePayment(int nHeight, int64_t blockValue, int nMasternodeCount, bool isZbittoriumStake)
+int64_t GetMasternodePayment(int nHeight, int64_t blockValue, int nMasternodeCount, bool isZBittoriumStake)
 {
     int64_t ret = 0;
 
@@ -2070,7 +2070,7 @@ int64_t GetMasternodePayment(int nHeight, int64_t blockValue, int nMasternodeCou
     } else {
         //When zbittorium is staked, masternode only gets 2 BTOR
         ret = 3 * COIN;
-        if (isZbittoriumStake)
+        if (isZBittoriumStake)
             ret = 2 * COIN;
     }
 
@@ -2590,7 +2590,7 @@ void ThreadScriptCheck()
     scriptcheckqueue.Thread();
 }
 
-void RecalculateZbittoriumMinted()
+void RecalculateZBittoriumMinted()
 {
     CBlockIndex *pindex = chainActive[Params().Zerocoin_StartHeight()];
     int nHeightEnd = chainActive.Height();
@@ -2617,7 +2617,7 @@ void RecalculateZbittoriumMinted()
     }
 }
 
-void RecalculateZbittoriumSpent()
+void RecalculateZBittoriumSpent()
 {
     CBlockIndex* pindex = chainActive[Params().Zerocoin_StartHeight()];
     while (true) {
@@ -2653,7 +2653,7 @@ void RecalculateZbittoriumSpent()
     }
 }
 
-bool RecalculatebittoriumSupply(int nHeightStart)
+bool RecalculateBittoriumSupply(int nHeightStart)
 {
     if (nHeightStart > chainActive.Height())
         return false;
@@ -2773,7 +2773,7 @@ bool ReindexAccumulators(list<uint256>& listMissingCheckpoints, string& strError
     return true;
 }
 
-bool UpdateZbittoriumSupply(const CBlock& block, CBlockIndex* pindex, bool fJustCheck)
+bool UpdateZBittoriumSupply(const CBlock& block, CBlockIndex* pindex, bool fJustCheck)
 {
     std::list<CZerocoinMint> listMints;
     bool fFilterInvalid = pindex->nHeight >= Params().Zerocoin_Block_RecalculateAccumulators();
@@ -3038,13 +3038,13 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
 
     //A one-time event where money supply counts were off and recalculated on a certain block.
     if (pindex->nHeight == Params().Zerocoin_Block_RecalculateAccumulators() + 1) {
-        RecalculateZbittoriumMinted();
-        RecalculateZbittoriumSpent();
-        RecalculatebittoriumSupply(Params().Zerocoin_StartHeight());
+        RecalculateZBittoriumMinted();
+        RecalculateZBittoriumSpent();
+        RecalculateBittoriumSupply(Params().Zerocoin_StartHeight());
     }
 
     //Track zbittorium money supply in the block index
-    if (!UpdateZbittoriumSupply(block, pindex, fJustCheck))
+    if (!UpdateZBittoriumSupply(block, pindex, fJustCheck))
         return state.DoS(100, error("%s: Failed to calculate new zbittorium supply for block=%s height=%d", __func__,
                                     block.GetHash().GetHex(), pindex->nHeight), REJECT_INVALID);
 
@@ -4338,7 +4338,7 @@ bool ContextualCheckZerocoinStake(int nHeight, CStakeInput* stake)
     if (nHeight < Params().Zerocoin_Block_V2_Start())
         return error("%s: zbittorium stake block is less than allowed start height", __func__);
 
-    if (CZbittoriumStake* zbittorium = dynamic_cast<CZbittoriumStake*>(stake)) {
+    if (CZBittoriumStake* zbittorium = dynamic_cast<CZBittoriumStake*>(stake)) {
         CBlockIndex* pindexFrom = zbittorium->GetIndexFrom();
         if (!pindexFrom)
             return error("%s: failed to get index associated with zbittorium stake checksum", __func__);
@@ -4400,7 +4400,7 @@ bool AcceptBlock(CBlock& block, CValidationState& state, CBlockIndex** ppindex, 
         if (!stake)
             return error("%s: null stake ptr", __func__);
 
-        if (stake->IsZbittorium() && !ContextualCheckZerocoinStake(pindexPrev->nHeight, stake.get()))
+        if (stake->IsZBittorium() && !ContextualCheckZerocoinStake(pindexPrev->nHeight, stake.get()))
             return state.DoS(100, error("%s: staked zbittorium fails context checks", __func__));
 
         uint256 hash = block.GetHash();
