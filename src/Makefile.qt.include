@@ -65,7 +65,7 @@ QT_FORMS_UI = \
   qt/forms/sendcoinsentry.ui \
   qt/forms/signverifymessagedialog.ui \
   qt/forms/transactiondescdialog.ui \
-  qt/forms/zbittoriumcontroldialog.ui
+  qt/forms/zbtorcontroldialog.ui
 
 QT_MOC_CPP = \
   qt/moc_addressbookpage.cpp \
@@ -119,7 +119,7 @@ QT_MOC_CPP = \
   qt/moc_walletframe.cpp \
   qt/moc_walletmodel.cpp \
   qt/moc_walletview.cpp \
-  qt/moc_zbittoriumcontroldialog.cpp
+  qt/moc_zbtorcontroldialog.cpp
 
 BITCOIN_MM = \
   qt/macdockiconhandler.mm \
@@ -200,7 +200,7 @@ BITCOIN_QT_H = \
   qt/walletmodeltransaction.h \
   qt/walletview.h \
   qt/winshutdownmonitor.h \
-  qt/zbittoriumcontroldialog.h
+  qt/zbtorcontroldialog.h
 
 RES_ICONS = \
   qt/res/icons/add.png \
@@ -259,12 +259,12 @@ RES_ICONS = \
   qt/res/icons/tx_input.png \
   qt/res/icons/tx_output.png \
   qt/res/icons/tx_mined.png \
-  qt/res/icons/unit_bittorium.png \
-  qt/res/icons/unit_mbittorium.png \
-  qt/res/icons/unit_ubittorium.png \
-  qt/res/icons/unit_tbittorium.png \
-  qt/res/icons/unit_tmbittorium.png \
-  qt/res/icons/unit_tubittorium.png
+  qt/res/icons/unit_btor.png \
+  qt/res/icons/unit_mbtor.png \
+  qt/res/icons/unit_ubtor.png \
+  qt/res/icons/unit_tbtor.png \
+  qt/res/icons/unit_tmbtor.png \
+  qt/res/icons/unit_tubtor.png
 
 BITCOIN_QT_BASE_CPP = \
   qt/bantablemodel.cpp \
@@ -327,7 +327,7 @@ BITCOIN_QT_WALLET_CPP = \
   qt/walletmodel.cpp \
   qt/walletmodeltransaction.cpp \
   qt/walletview.cpp \
-  qt/zbittoriumcontroldialog.cpp
+  qt/zbtorcontroldialog.cpp
 
 BITCOIN_QT_CPP = $(BITCOIN_QT_BASE_CPP)
 if TARGET_WINDOWS
@@ -341,7 +341,7 @@ RES_IMAGES = \
   qt/res/images/about.png \
   qt/res/images/splash.png \
   qt/res/images/splash_testnet.png \
-  qt/res/images/bittorium_logo_horizontal.png \
+  qt/res/images/btor_logo_horizontal.png \
   qt/res/images/downArrow_dark.png \
   qt/res/images/downArrow_small_dark.png \
   qt/res/images/downArrow_small.png \

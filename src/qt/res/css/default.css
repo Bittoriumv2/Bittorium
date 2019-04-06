@@ -740,13 +740,13 @@ QWidget#PrivacyDialog QLabel {
 border:0px solid #000;
 }
 
-QWidget#PrivacyDialog QLabel#zPIVLabel {
+QWidget#PrivacyDialog QLabel#zBTORLabel {
 font-size:14px;
 color:#ffffff;
 background-color:#5c4c7c;
 }
 
-QWidget#PrivacyDialog QLabel#oPIVLabel {
+QWidget#PrivacyDialog QLabel#oBTORLabel {
 font-size:14px;
 color:#ffffff;
 background-color:#5c4c7c;
@@ -913,7 +913,7 @@ background-color:#ffffff;
 
 QLabel#labelOverviewHeaderRight {
 qproperty-alignment: 'AlignVCenter | AlignRight';
-background-image: url(':/images/bittorium_logo_horizontal');
+background-image: url(':/images/btor_logo_horizontal');
 background-repeat: no-repeat;
 }
 
