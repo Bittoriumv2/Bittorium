@@ -168,8 +168,12 @@ public:
         genesis.nNonce = 2402015;
 
         hashGenesisBlock = genesis.GetHash();
-        assert(hashGenesisBlock == uint256(""));
-        assert(genesis.hashMerkleRoot == uint256(""));
+
+//      printf("Mainnet block.GetHash = 0x%s\n", hashGenesisBlock.ToString().c_str());
+//      printf("Mainnet block.hashMerkleRoot: 0x%s\n", genesis.hashMerkleRoot.ToString().c_str());
+
+        assert(hashGenesisBlock == uint256("0x49dfe9e66cf6e720080937e10a565a2fa27309eeecbffdce71575399a630c2e8"));
+        assert(genesis.hashMerkleRoot == uint256("0x4c054ccc72afe6b9ea66f62c7822f4e71dcdb63906a39ef47530ae0d5b062d67"));
 
         vSeeds.push_back(CDNSSeedData("bittorium.org", "seed1.bittorium.org"));     // Primary DNS Seeder from Bittorium
         vSeeds.push_back(CDNSSeedData("bittorium.org", "seed2.bittorium.org"));    // Secondary DNS Seeder from Bittorium Core Devs
@@ -267,7 +271,10 @@ public:
         genesis.nNonce = 0;
 
         hashGenesisBlock = genesis.GetHash();
-        assert(hashGenesisBlock == uint256(""));
+
+//      printf("Testnet block.GetHash = 0x%s\n", hashGenesisBlock.ToString().c_str());
+
+        assert(hashGenesisBlock == uint256("0x19ba70473871ec7dba81798612fdd1609acb5cfe69dbeb6cc1b344084a8876a8"));
 
         vFixedSeeds.clear();
         vSeeds.clear();
@@ -338,7 +345,10 @@ public:
 
         hashGenesisBlock = genesis.GetHash();
         nDefaultPort = 51476;
-        assert(hashGenesisBlock == uint256(""));
+
+//      printf("Regtestnet block.GetHash = 0x%s\n", hashGenesisBlock.ToString().c_str());
+
+        assert(hashGenesisBlock == uint256("0xaab8a618ba97cb19a92700c0922677978f5b1a4bd47d683f2493e58968283eba"));
 
         vFixedSeeds.clear(); //! Testnet mode doesn't have any fixed seeds.
         vSeeds.clear();      //! Testnet mode doesn't have any DNS seeds.
