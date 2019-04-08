@@ -18,7 +18,7 @@ BITCOIND_BIN=${BITCOIND_BIN:-/usr/bin/bittoriumd}
 BITCOIND_NICE=${BITCOIND_NICE:-${NICELEVEL:-0}}
 BITCOIND_OPTS="${BITCOIND_OPTS:-${BITCOIN_OPTS}}"
 
-name="bittorium Core Daemon"
+name="Bittorium Core Daemon"
 description="bittorium crypto-currency p2p network daemon"
 
 command="/usr/bin/bittoriumd"
